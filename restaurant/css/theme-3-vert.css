@@ -1,0 +1,54 @@
+/**
+ * THEME 3: VERT NATURE
+ * Couleurs: Vert, Émeraude, Blanc cassé
+ * Idéal pour: Restaurant, Bio, Alimentation
+ */
+
+:root {
+    --primary: #10b981;
+    --primary-dark: #059669;
+    --primary-light: #6ee7b7;
+    --secondary: #84cc16;
+    --secondary-dark: #65a30d;
+    --accent: #34d399;
+    --dark: #064e3b;
+    --light: #ecfdf5;
+    --gray: #6b7280;
+    --gray-light: #9ca3af;
+    --border: #d1fae5;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+    --bg-gradient-start: #ecfdf5;
+    --bg-gradient-mid: #d1fae5;
+    --bg-gradient-end: #a7f3d0;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(16, 185, 129, 0.15);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--primary);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.product-modal-category {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--primary-dark);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-dark);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.stat-card-icon.pink { background: rgba(16, 185, 129, 0.1); color: var(--primary); }
+.stat-card-icon.purple { background: rgba(132, 204, 22, 0.1); color: var(--secondary-dark); }

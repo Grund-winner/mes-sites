@@ -1,0 +1,58 @@
+/**
+ * THEME 6: VIOLET ROYAL
+ * Couleurs: Violet, Mauve, Argent
+ * Idéal pour: Bijoux, Accessoires, Mode
+ */
+
+:root {
+    --primary: #7c3aed;
+    --primary-dark: #6d28d9;
+    --primary-light: #c4b5fd;
+    --secondary: #a855f7;
+    --secondary-dark: #9333ea;
+    --accent: #8b5cf6;
+    --dark: #2e1065;
+    --light: #faf5ff;
+    --gray: #6b7280;
+    --gray-light: #9ca3af;
+    --border: #e9d5ff;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+    --bg-gradient-start: #faf5ff;
+    --bg-gradient-mid: #f3e8ff;
+    --bg-gradient-end: #e9d5ff;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(124, 58, 237, 0.15);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--primary);
+    background: rgba(124, 58, 237, 0.05);
+}
+
+.product-modal-category {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--primary);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary);
+    background: rgba(124, 58, 237, 0.1);
+}
+
+.stat-card-icon.pink { background: rgba(124, 58, 237, 0.1); color: var(--primary); }
+.stat-card-icon.purple { background: rgba(168, 85, 247, 0.1); color: var(--secondary); }
+
+.badge-nouveau {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+}

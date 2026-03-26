@@ -1,0 +1,114 @@
+{
+    "site": {
+        "name": "Time Luxury",
+        "tagline": "Montres & Horlogerie",
+        "description": "Découvrez notre collection de montres de luxe, classiques et sportives. Des pièces d'exception pour chaque occasion.",
+        "phone": "22890000000",
+        "email": "contact@timeluxury.tg",
+        "address": "Lomé, Togo",
+        "logo": "logo.png",
+        "stats": {
+            "products": "80+",
+            "rating": "4.9",
+            "delivery": "48h"
+        }
+    },
+    "categories": [
+        {"id": "tous", "name": "Tous", "icon": "✨", "count": 10},
+        {"id": "luxury", "name": "Luxe", "icon": "💎", "count": 3},
+        {"id": "classique", "name": "Classique", "icon": "⌚", "count": 3},
+        {"id": "sport", "name": "Sport", "icon": "🏃", "count": 2},
+        {"id": "connectees", "name": "Connectées", "icon": "📲", "count": 2}
+    ],
+    "genders": ["Tous", "Homme", "Femme", "Mixte"],
+    "products": [
+        {
+            "id": 1,
+            "name": "Montre Chronographe Or",
+            "brand": "TimeCraft",
+            "category": "luxury",
+            "gender": "Homme",
+            "price": 185000,
+            "old_price": 220000,
+            "stock": 5,
+            "badge": "promo",
+            "rating": 89,
+            "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400",
+                "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400"
+            ],
+            "description": "Montre chronographe plaqué or 18K. Mouvement automatique suisse, bracelet cuir."
+        },
+        {
+            "id": 2,
+            "name": "Montre Élégance Diamant",
+            "brand": "LuxeTime",
+            "category": "luxury",
+            "gender": "Femme",
+            "price": 145000,
+            "old_price": null,
+            "stock": 3,
+            "badge": "nouveau",
+            "rating": 56,
+            "image": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=400",
+            "images": [],
+            "description": "Montre féminine sertie de diamants. Bracelet en acier inoxydable."
+        },
+        {
+            "id": 3,
+            "name": "Montre Sport Pro",
+            "brand": "SportChrono",
+            "category": "sport",
+            "gender": "Homme",
+            "price": 45000,
+            "old_price": null,
+            "stock": 15,
+            "badge": "populaire",
+            "rating": 178,
+            "image": "https://images.unsplash.com/photo-1539874754764-5a96559165b0?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400"
+            ],
+            "description": "Montre de sport étanche 100m avec chronomètre et luminescence."
+        },
+        {
+            "id": 4,
+            "name": "SmartWatch Series 9",
+            "brand": "TechTime",
+            "category": "connectees",
+            "gender": "Mixte",
+            "price": 95000,
+            "old_price": 110000,
+            "stock": 20,
+            "badge": "promo",
+            "rating": 234,
+            "image": "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=400",
+            "images": [],
+            "description": "Montre connectée avec GPS, cardio, suivi du sommeil."
+        },
+        {
+            "id": 5,
+            "name": "Montre Classique Cuir",
+            "brand": "ClassicWatch",
+            "category": "classique",
+            "gender": "Homme",
+            "price": 35000,
+            "old_price": null,
+            "stock": 25,
+            "badge": "",
+            "rating": 112,
+            "image": "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400",
+            "images": [],
+            "description": "Montre classique avec bracelet cuir véritable. Style intemporel."
+        }
+    ],
+    "featured": [1, 3, 4],
+    "customers": [],
+    "orders": [],
+    "settings": {
+        "currency": "FCFA",
+        "theme": "theme-4-or",
+        "whatsapp_message": "Bonjour Time Luxury, je suis intéressé par :"
+    }
+}

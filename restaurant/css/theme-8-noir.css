@@ -1,0 +1,62 @@
+/**
+ * THEME 8: NOIR ÉLÉGANT
+ * Couleurs: Noir, Gris, Blanc
+ * Idéal pour: Montres, Luxe, Mode masculine
+ */
+
+:root {
+    --primary: #1f2937;
+    --primary-dark: #111827;
+    --primary-light: #4b5563;
+    --secondary: #374151;
+    --secondary-dark: #1f2937;
+    --accent: #6b7280;
+    --dark: #000000;
+    --light: #f9fafb;
+    --gray: #6b7280;
+    --gray-light: #9ca3af;
+    --border: #e5e7eb;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+    --bg-gradient-start: #f9fafb;
+    --bg-gradient-mid: #f3f4f6;
+    --bg-gradient-end: #e5e7eb;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--primary);
+    background: rgba(31, 41, 55, 0.05);
+}
+
+.product-modal-category {
+    background: rgba(31, 41, 55, 0.1);
+    color: var(--primary);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary);
+    background: rgba(31, 41, 55, 0.1);
+}
+
+.stat-card-icon.pink { background: rgba(31, 41, 55, 0.1); color: var(--primary); }
+.stat-card-icon.purple { background: rgba(55, 65, 81, 0.1); color: var(--secondary); }
+
+.footer {
+    background: var(--dark);
+}
+
+.product-card {
+    border: 1px solid var(--border);
+}

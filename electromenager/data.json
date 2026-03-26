@@ -1,0 +1,116 @@
+{
+    "site": {
+        "name": "Electro Maison",
+        "tagline": "Électroménager & High-Tech",
+        "description": "Votre spécialiste en électroménager et appareils high-tech. Des produits de qualité pour équiper votre maison.",
+        "phone": "22890000000",
+        "email": "contact@electromaison.tg",
+        "address": "Lomé, Togo",
+        "logo": "logo.png",
+        "stats": {
+            "products": "60+",
+            "rating": "4.6",
+            "delivery": "72h"
+        }
+    },
+    "categories": [
+        {"id": "tous", "name": "Tous", "icon": "✨", "count": 10},
+        {"id": "cuisine", "name": "Cuisine", "icon": "🍳", "count": 3},
+        {"id": "menage", "name": "Ménage", "icon": "🧹", "count": 3},
+        {"id": "confort", "name": "Confort", "icon": "❄️", "count": 2},
+        {"id": "tv-son", "name": "TV & Son", "icon": "📺", "count": 2}
+    ],
+    "genders": ["Tous"],
+    "products": [
+        {
+            "id": 1,
+            "name": "Mixeur Plongeant Pro",
+            "brand": "Braun",
+            "category": "cuisine",
+            "gender": "Tous",
+            "price": 25000,
+            "old_price": 32000,
+            "stock": 15,
+            "badge": "promo",
+            "rating": 178,
+            "image": "https://images.unsplash.com/photo-1570222094114-28a9d88a27e6?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400"
+            ],
+            "description": "Mixeur plongeant 1000W avec accessoires. Puissant et silencieux."
+        },
+        {
+            "id": 2,
+            "name": "Aspirateur Sans Fil",
+            "brand": "Dyson",
+            "category": "menage",
+            "gender": "Tous",
+            "price": 125000,
+            "old_price": null,
+            "stock": 8,
+            "badge": "nouveau",
+            "rating": 89,
+            "image": "https://images.unsplash.com/photo-1558317374-a3545eca46f2?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1527515673510-813d31923093?w=400",
+                "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400"
+            ],
+            "description": "Aspirateur sans fil avec technologie cyclone. Autonomie 60 min."
+        },
+        {
+            "id": 3,
+            "name": "Climatiseur Portable",
+            "brand": "TCL",
+            "category": "confort",
+            "gender": "Tous",
+            "price": 85000,
+            "old_price": 95000,
+            "stock": 12,
+            "badge": "promo",
+            "rating": 134,
+            "image": "https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=400",
+            "images": [],
+            "description": "Climatiseur portable 9000 BTU. Télécommande incluse."
+        },
+        {
+            "id": 4,
+            "name": "Smart TV 55\" 4K",
+            "brand": "Samsung",
+            "category": "tv-son",
+            "gender": "Tous",
+            "price": 285000,
+            "old_price": null,
+            "stock": 6,
+            "badge": "populaire",
+            "rating": 245,
+            "image": "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1461151304267-38535e780c79?w=400"
+            ],
+            "description": "Smart TV 55 pouces 4K UHD. Tizen OS, HDR, WiFi intégré."
+        },
+        {
+            "id": 5,
+            "name": "Bouilloire Électrique",
+            "brand": "Philips",
+            "category": "cuisine",
+            "gender": "Tous",
+            "price": 12000,
+            "old_price": null,
+            "stock": 35,
+            "badge": "",
+            "rating": 312,
+            "image": "https://images.unsplash.com/photo-1544233726-9f1d2b27be8b?w=400",
+            "images": [],
+            "description": "Bouilloire 1.7L avec thermostat réglable. Arrêt automatique."
+        }
+    ],
+    "featured": [2, 3, 4],
+    "customers": [],
+    "orders": [],
+    "settings": {
+        "currency": "FCFA",
+        "theme": "theme-7-orange",
+        "whatsapp_message": "Bonjour Electro Maison, je suis intéressé par :"
+    }
+}
