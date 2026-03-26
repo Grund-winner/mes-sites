@@ -1,0 +1,114 @@
+{
+    "site": {
+        "name": "Bijoux Élégance",
+        "tagline": "Bijoux & Accessoires de Luxe",
+        "description": "Découvrez notre collection de bijoux fins, bagues, colliers et bracelets. Des pièces uniques pour sublimer votre style.",
+        "phone": "22890000000",
+        "email": "contact@bijoux-elegance.tg",
+        "address": "Lomé, Togo",
+        "logo": "logo.png",
+        "stats": {
+            "products": "120+",
+            "rating": "4.8",
+            "delivery": "24h"
+        }
+    },
+    "categories": [
+        {"id": "tous", "name": "Tous", "icon": "✨", "count": 12},
+        {"id": "bagues", "name": "Bagues", "icon": "💍", "count": 3},
+        {"id": "colliers", "name": "Colliers", "icon": "📿", "count": 3},
+        {"id": "bracelets", "name": "Bracelets", "icon": "✨", "count": 3},
+        {"id": "boucles", "name": "Boucles", "icon": "💎", "count": 3}
+    ],
+    "genders": ["Tous", "Femme", "Homme", "Mixte"],
+    "products": [
+        {
+            "id": 1,
+            "name": "Collier Perles Dorées",
+            "brand": "BijouChic",
+            "category": "colliers",
+            "gender": "Femme",
+            "price": 25000,
+            "old_price": 30000,
+            "stock": 15,
+            "badge": "promo",
+            "rating": 89,
+            "image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400"
+            ],
+            "description": "Collier de perles dorées avec pendentif cœur. Finition haute qualité."
+        },
+        {
+            "id": 2,
+            "name": "Bague Solitaire Diamant",
+            "brand": "LuxeBijoux",
+            "category": "bagues",
+            "gender": "Femme",
+            "price": 125000,
+            "old_price": null,
+            "stock": 5,
+            "badge": "nouveau",
+            "rating": 45,
+            "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1598560917505-59c3d25e12ad?w=400",
+                "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=400"
+            ],
+            "description": "Bague solitaire avec diamant serti sur or 18 carats."
+        },
+        {
+            "id": 3,
+            "name": "Bracelet Gourmette Or",
+            "brand": "OrFévrerie",
+            "category": "bracelets",
+            "gender": "Homme",
+            "price": 85000,
+            "old_price": null,
+            "stock": 8,
+            "badge": "populaire",
+            "rating": 156,
+            "image": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400",
+            "images": [],
+            "description": "Bracelet gourmette en or jaune 18K. Gravure personnalisable offerte."
+        },
+        {
+            "id": 4,
+            "name": "Boucles d'Oreilles Créoles",
+            "brand": "BijouChic",
+            "category": "boucles",
+            "gender": "Femme",
+            "price": 12000,
+            "old_price": 15000,
+            "stock": 25,
+            "badge": "promo",
+            "rating": 203,
+            "image": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400",
+            "images": [],
+            "description": "Créoles dorées classiques. Taille moyenne, fermoir sécurisé."
+        },
+        {
+            "id": 5,
+            "name": "Collier Pendentif Croix",
+            "brand": "FaithJewelry",
+            "category": "colliers",
+            "gender": "Mixte",
+            "price": 18000,
+            "old_price": null,
+            "stock": 20,
+            "badge": "",
+            "rating": 78,
+            "image": "https://images.unsplash.com/photo-1602751584552-8ba420552259?w=400",
+            "images": [],
+            "description": "Collier avec pendentif croix en argent 925. Chaîne ajustable."
+        }
+    ],
+    "featured": [2, 3, 4],
+    "customers": [],
+    "orders": [],
+    "settings": {
+        "currency": "FCFA",
+        "theme": "theme-6-violet",
+        "whatsapp_message": "Bonjour Bijoux Élégance, je suis intéressé par :"
+    }
+}

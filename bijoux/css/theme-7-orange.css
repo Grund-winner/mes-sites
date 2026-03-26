@@ -1,0 +1,58 @@
+/**
+ * THEME 7: ORANGE ENERGIE
+ * Couleurs: Orange, Corail, Blanc
+ * Idéal pour: Électroménager, Sport, Enfants
+ */
+
+:root {
+    --primary: #f97316;
+    --primary-dark: #ea580c;
+    --primary-light: #fdba74;
+    --secondary: #fb923c;
+    --secondary-dark: #f97316;
+    --accent: #ff8c42;
+    --dark: #7c2d12;
+    --light: #fff7ed;
+    --gray: #6b7280;
+    --gray-light: #9ca3af;
+    --border: #fed7aa;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+    --bg-gradient-start: #fff7ed;
+    --bg-gradient-mid: #ffedd5;
+    --bg-gradient-end: #fed7aa;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(249, 115, 22, 0.15);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--primary);
+    background: rgba(249, 115, 22, 0.05);
+}
+
+.product-modal-category {
+    background: rgba(249, 115, 22, 0.1);
+    color: var(--primary-dark);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-dark);
+    background: rgba(249, 115, 22, 0.1);
+}
+
+.stat-card-icon.pink { background: rgba(249, 115, 22, 0.1); color: var(--primary); }
+.stat-card-icon.purple { background: rgba(251, 146, 60, 0.1); color: var(--secondary); }
+
+.badge-populaire {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+}

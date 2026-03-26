@@ -1,0 +1,62 @@
+/**
+ * THEME 10: MARRON CUIR
+ * Couleurs: Marron, Cuir, Beige
+ * Idéal pour: Sacs en cuir, Chaussures, Accessoires
+ */
+
+:root {
+    --primary: #92400e;
+    --primary-dark: #78350f;
+    --primary-light: #d97706;
+    --secondary: #b45309;
+    --secondary-dark: #92400e;
+    --accent: #f59e0b;
+    --dark: #451a03;
+    --light: #fffbeb;
+    --gray: #6b7280;
+    --gray-light: #9ca3af;
+    --border: #fde68a;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+    --bg-gradient-start: #fffbeb;
+    --bg-gradient-mid: #fef3c7;
+    --bg-gradient-end: #fde68a;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(146, 64, 14, 0.15);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--primary);
+    background: rgba(146, 64, 14, 0.05);
+}
+
+.product-modal-category {
+    background: rgba(146, 64, 14, 0.1);
+    color: var(--primary);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary);
+    background: rgba(146, 64, 14, 0.1);
+}
+
+.stat-card-icon.pink { background: rgba(146, 64, 14, 0.1); color: var(--primary); }
+.stat-card-icon.purple { background: rgba(180, 83, 9, 0.1); color: var(--secondary); }
+
+.footer {
+    background: var(--primary-dark);
+}
+
+.product-card {
+    box-shadow: 0 2px 10px rgba(146, 64, 14, 0.08);
+}

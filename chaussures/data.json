@@ -1,0 +1,148 @@
+{
+    "site": {
+        "name": "Chaussures Style",
+        "tagline": "Chaussures & Sneakers",
+        "description": "Découvrez notre collection de chaussures tendance, sneakers, escarpins et bottines. Style et confort pour toutes les occasions.",
+        "phone": "22890000000",
+        "email": "contact@chaussures-style.tg",
+        "address": "Lomé, Togo",
+        "logo": "logo.png",
+        "stats": {
+            "products": "180+",
+            "rating": "4.7",
+            "delivery": "48h"
+        }
+    },
+    "categories": [
+        {
+            "id": "tous",
+            "name": "Tous",
+            "icon": "✨",
+            "count": 5
+        },
+        {
+            "id": "sneakers",
+            "name": "Sneakers",
+            "icon": "👟",
+            "count": 2
+        },
+        {
+            "id": "escarpins",
+            "name": "Escarpins",
+            "icon": "👠",
+            "count": 1
+        },
+        {
+            "id": "bottines",
+            "name": "Bottines",
+            "icon": "🥾",
+            "count": 1
+        },
+        {
+            "id": "sandales",
+            "name": "Sandales",
+            "icon": "🩴",
+            "count": 1
+        }
+    ],
+    "genders": [
+        "Tous",
+        "Femme",
+        "Homme",
+        "Mixte"
+    ],
+    "products": [
+        {
+            "id": 1,
+            "name": "Nike Air Force 1",
+            "brand": "Nike",
+            "category": "sneakers",
+            "gender": "Mixte",
+            "price": 35000,
+            "old_price": 42000,
+            "stock": 20,
+            "badge": "promo",
+            "rating": 312,
+            "image": "https:\/\/images.unsplash.com\/photo-1595950653106-6c9ebd614d3a?w=400",
+            "images": [
+                "https:\/\/images.unsplash.com\/photo-1549298916-b41d501d3772?w=400",
+                "https:\/\/images.unsplash.com\/photo-1600269452121-4f2416e55c28?w=400"
+            ],
+            "description": "Le classique intemporel. Cuir premium, semelle Air confortable."
+        },
+        {
+            "id": 2,
+            "name": "Escarpins Rouge Passion",
+            "brand": "Élégance",
+            "category": "escarpins",
+            "gender": "Femme",
+            "price": 22000,
+            "old_price": 28000,
+            "stock": 15,
+            "badge": "promo",
+            "rating": 189,
+            "image": "https:\/\/images.unsplash.com\/photo-1543163521-1bf539c55dd2?w=400",
+            "images": [],
+            "description": "Escarpins rouges en cuir verni. Talon 8cm confortable."
+        },
+        {
+            "id": 3,
+            "name": "Adidas Ultraboost",
+            "brand": "Adidas",
+            "category": "sneakers",
+            "gender": "Homme",
+            "price": 45000,
+            "old_price": null,
+            "stock": 12,
+            "badge": "nouveau",
+            "rating": 245,
+            "image": "https:\/\/images.unsplash.com\/photo-1587563871167-1ee9c731aefb?w=400",
+            "images": [
+                "https:\/\/images.unsplash.com\/photo-1608231387042-66d1773070a5?w=400"
+            ],
+            "description": "Running shoes avec technologie Boost. Confort maximal."
+        },
+        {
+            "id": 4,
+            "name": "Bottines Chelsea",
+            "brand": "UrbanBoot",
+            "category": "bottines",
+            "gender": "Homme",
+            "price": 38000,
+            "old_price": 45000,
+            "stock": 10,
+            "badge": "promo",
+            "rating": 134,
+            "image": "https:\/\/images.unsplash.com\/photo-1608256246200-53e635b5b65f?w=400",
+            "images": [],
+            "description": "Bottines Chelsea en cuir noir. Style urbain et intemporel."
+        },
+        {
+            "id": 5,
+            "name": "Sandales Dorées",
+            "brand": "GoldStep",
+            "category": "sandales",
+            "gender": "Femme",
+            "price": 18500,
+            "old_price": null,
+            "stock": 25,
+            "badge": "populaire",
+            "rating": 167,
+            "image": "https:\/\/images.unsplash.com\/photo-1603487742131-4160ec999306?w=400",
+            "images": [],
+            "description": "Sandales à talons dorées avec strass. Parfaites pour les occasions."
+        }
+    ],
+    "featured": [
+        1,
+        2,
+        3
+    ],
+    "customers": [],
+    "orders": [],
+    "settings": {
+        "currency": "FCFA",
+        "theme": "theme-2-bleu",
+        "whatsapp_message": "Bonjour Chaussures Style, je commande :"
+    }
+}

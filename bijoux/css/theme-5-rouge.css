@@ -1,0 +1,58 @@
+/**
+ * THEME 5: ROUGE PASSION
+ * Couleurs: Rouge, Bordeaux, Blanc
+ * Idéal pour: Chaussures, Mode, Sport
+ */
+
+:root {
+    --primary: #dc2626;
+    --primary-dark: #b91c1c;
+    --primary-light: #fca5a5;
+    --secondary: #991b1b;
+    --secondary-dark: #7f1d1d;
+    --accent: #ef4444;
+    --dark: #450a0a;
+    --light: #fef2f2;
+    --gray: #6b7280;
+    --gray-light: #9ca3af;
+    --border: #fecaca;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #dc2626;
+    --info: #3b82f6;
+    --bg-gradient-start: #fef2f2;
+    --bg-gradient-mid: #fee2e2;
+    --bg-gradient-end: #fecaca;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(220, 38, 38, 0.15);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--primary);
+    background: rgba(220, 38, 38, 0.05);
+}
+
+.product-modal-category {
+    background: rgba(220, 38, 38, 0.1);
+    color: var(--primary);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary);
+    background: rgba(220, 38, 38, 0.1);
+}
+
+.stat-card-icon.pink { background: rgba(220, 38, 38, 0.1); color: var(--primary); }
+.stat-card-icon.purple { background: rgba(153, 27, 27, 0.1); color: var(--secondary); }
+
+.badge-promo {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}

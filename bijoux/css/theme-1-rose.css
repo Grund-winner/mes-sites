@@ -1,0 +1,54 @@
+/**
+ * THEME 1: ROSE PINK
+ * Couleurs: Rose, Violet, Dégradé pastel
+ * Idéal pour: Cosmétiques, Beauté, Mode féminine
+ */
+
+:root {
+    --primary: #ec4899;
+    --primary-dark: #db2777;
+    --primary-light: #f9a8d4;
+    --secondary: #8b5cf6;
+    --secondary-dark: #7c3aed;
+    --accent: #f472b6;
+    --dark: #1f2937;
+    --light: #f9fafb;
+    --gray: #6b7280;
+    --gray-light: #9ca3af;
+    --border: #e5e7eb;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+    --bg-gradient-start: #fdf2f8;
+    --bg-gradient-mid: #faf5ff;
+    --bg-gradient-end: #eff6ff;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(236, 72, 153, 0.15);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--primary);
+    background: rgba(236, 72, 153, 0.05);
+}
+
+.product-modal-category {
+    background: rgba(236, 72, 153, 0.1);
+    color: var(--primary);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary);
+    background: rgba(236, 72, 153, 0.1);
+}
+
+.stat-card-icon.pink { background: rgba(236, 72, 153, 0.1); color: var(--primary); }
+.stat-card-icon.purple { background: rgba(139, 92, 246, 0.1); color: var(--secondary); }

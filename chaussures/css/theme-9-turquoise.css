@@ -1,0 +1,58 @@
+/**
+ * THEME 9: TURQUOISE TROPICAL
+ * Couleurs: Turquoise, Blanc sable, Corail
+ * Idéal pour: Sacs, Plage, Vacances
+ */
+
+:root {
+    --primary: #14b8a6;
+    --primary-dark: #0d9488;
+    --primary-light: #5eead4;
+    --secondary: #f43f5e;
+    --secondary-dark: #e11d48;
+    --accent: #2dd4bf;
+    --dark: #134e4a;
+    --light: #f0fdfa;
+    --gray: #6b7280;
+    --gray-light: #9ca3af;
+    --border: #ccfbf1;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+    --bg-gradient-start: #f0fdfa;
+    --bg-gradient-mid: #ccfbf1;
+    --bg-gradient-end: #99f6e4;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(20, 184, 166, 0.15);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--primary);
+    background: rgba(20, 184, 166, 0.05);
+}
+
+.product-modal-category {
+    background: rgba(20, 184, 166, 0.1);
+    color: var(--primary-dark);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-dark);
+    background: rgba(20, 184, 166, 0.1);
+}
+
+.stat-card-icon.pink { background: rgba(20, 184, 166, 0.1); color: var(--primary); }
+.stat-card-icon.purple { background: rgba(244, 63, 94, 0.1); color: var(--secondary); }
+
+.badge-promo {
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+}

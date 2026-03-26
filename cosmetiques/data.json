@@ -1,0 +1,132 @@
+{
+    "site": {
+        "name": "Beauty Glow",
+        "tagline": "Cosmétiques & Beauté Premium",
+        "description": "Découvrez notre sélection de cosmétiques de luxe, parfums, soins visage et corps. Des produits authentiques pour votre beauté naturelle.",
+        "phone": "22890000000",
+        "email": "contact@beautyglow.tg",
+        "address": "Lomé, Togo",
+        "logo": "logo.png",
+        "stats": {
+            "products": "150+",
+            "rating": "4.9",
+            "delivery": "Lomé"
+        }
+    },
+    "categories": [
+        {"id": "tous", "name": "Tous", "icon": "✨", "count": 12},
+        {"id": "parfums", "name": "Parfums", "icon": "🌸", "count": 4},
+        {"id": "soins-visage", "name": "Soins Visage", "icon": "✨", "count": 3},
+        {"id": "maquillage", "name": "Maquillage", "icon": "💄", "count": 3},
+        {"id": "soins-corps", "name": "Soins Corps", "icon": "🧴", "count": 2}
+    ],
+    "genders": ["Tous", "Femme", "Homme", "Mixte"],
+    "products": [
+        {
+            "id": 1,
+            "name": "Oud Rose Intense",
+            "brand": "Al Haramain",
+            "category": "parfums",
+            "gender": "Femme",
+            "price": 28500,
+            "old_price": 35000,
+            "stock": 15,
+            "badge": "promo",
+            "rating": 124,
+            "image": "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400",
+                "https://images.unsplash.com/photo-1587017539504-67cfbddac569?w=400"
+            ],
+            "description": "Un parfum oriental envoûtant aux notes de rose et d'oud. Parfait pour les soirées élégantes."
+        },
+        {
+            "id": 2,
+            "name": "La Vie Est Belle",
+            "brand": "Lancôme",
+            "category": "parfums",
+            "gender": "Femme",
+            "price": 32000,
+            "old_price": null,
+            "stock": 8,
+            "badge": "populaire",
+            "rating": 89,
+            "image": "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400",
+            "images": [],
+            "description": "L'icône de la féminité moderne. Un bouquet gourmand d'iris, de jasmin et de praline."
+        },
+        {
+            "id": 3,
+            "name": "Sauvage Elixir",
+            "brand": "Dior",
+            "category": "parfums",
+            "gender": "Homme",
+            "price": 38000,
+            "old_price": null,
+            "stock": 12,
+            "badge": "nouveau",
+            "rating": 156,
+            "image": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400",
+            "images": [],
+            "description": "Une concentration intense aux notes épicées de cannelle, cardamome et musc."
+        },
+        {
+            "id": 4,
+            "name": "Crème Hydratante Anti-Âge",
+            "brand": "L'Oréal Paris",
+            "category": "soins-visage",
+            "gender": "Femme",
+            "price": 8500,
+            "old_price": 12000,
+            "stock": 25,
+            "badge": "promo",
+            "rating": 67,
+            "image": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400"
+            ],
+            "description": "Crème hydratante quotidienne avec SPF 30. Réduit les rides et illumine le teint."
+        },
+        {
+            "id": 5,
+            "name": "Sérum Vitamine C",
+            "brand": "The Ordinary",
+            "category": "soins-visage",
+            "gender": "Mixte",
+            "price": 12000,
+            "old_price": null,
+            "stock": 18,
+            "badge": "populaire",
+            "rating": 203,
+            "image": "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?w=400",
+            "images": [],
+            "description": "Sérum concentré en vitamine C pour un teint lumineux et uniforme."
+        },
+        {
+            "id": 6,
+            "name": "Rouge à Lèvres Matte",
+            "brand": "MAC Cosmetics",
+            "category": "maquillage",
+            "gender": "Femme",
+            "price": 6500,
+            "old_price": null,
+            "stock": 30,
+            "badge": "nouveau",
+            "rating": 78,
+            "image": "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400",
+                "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400"
+            ],
+            "description": "Rouge à lèvres longue tenue avec finition mate. Disponible en 12 teintes."
+        }
+    ],
+    "featured": [1, 4, 6],
+    "customers": [],
+    "orders": [],
+    "settings": {
+        "currency": "FCFA",
+        "theme": "theme-1-rose",
+        "whatsapp_message": "Bonjour Beauty Glow, je souhaite commander :"
+    }
+}
