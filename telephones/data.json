@@ -1,0 +1,113 @@
+{
+    "site": {
+        "name": "Tech Store",
+        "tagline": "Téléphones & Accessoires",
+        "description": "Votre destination pour les derniers smartphones, accessoires et gadgets tech. Prix compétitifs et garantie assurée.",
+        "phone": "22890000000",
+        "email": "contact@techstore.tg",
+        "address": "Lomé, Togo",
+        "logo": "logo.png",
+        "stats": {
+            "products": "200+",
+            "rating": "4.7",
+            "delivery": "24h"
+        }
+    },
+    "categories": [
+        {"id": "tous", "name": "Tous", "icon": "✨", "count": 15},
+        {"id": "smartphones", "name": "Smartphones", "icon": "📱", "count": 6},
+        {"id": "accessoires", "name": "Accessoires", "icon": "🎧", "count": 5},
+        {"id": "coques", "name": "Coques", "icon": "📲", "count": 4}
+    ],
+    "genders": ["Tous"],
+    "products": [
+        {
+            "id": 1,
+            "name": "iPhone 15 Pro",
+            "brand": "Apple",
+            "category": "smartphones",
+            "gender": "Tous",
+            "price": 450000,
+            "old_price": 500000,
+            "stock": 8,
+            "badge": "promo",
+            "rating": 312,
+            "image": "https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400",
+                "https://images.unsplash.com/photo-1696446702183-cbd13d78e1e7?w=400"
+            ],
+            "description": "iPhone 15 Pro 256GB Titanium. Puce A17 Pro, caméra 48MP, USB-C."
+        },
+        {
+            "id": 2,
+            "name": "Samsung Galaxy S24 Ultra",
+            "brand": "Samsung",
+            "category": "smartphones",
+            "gender": "Tous",
+            "price": 420000,
+            "old_price": null,
+            "stock": 12,
+            "badge": "nouveau",
+            "rating": 189,
+            "image": "https://images.unsplash.com/photo-1610945265078-3858a0828671?w=400",
+            "images": [],
+            "description": "Galaxy S24 Ultra avec S Pen, IA intégrée, caméra 200MP."
+        },
+        {
+            "id": 3,
+            "name": "AirPods Pro 2",
+            "brand": "Apple",
+            "category": "accessoires",
+            "gender": "Tous",
+            "price": 85000,
+            "old_price": 95000,
+            "stock": 25,
+            "badge": "promo",
+            "rating": 456,
+            "image": "https://images.unsplash.com/photo-1603351154351-5cfb3d04ef32?w=400",
+            "images": [
+                "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=400"
+            ],
+            "description": "Écouteurs sans fil avec réduction active du bruit et audio spatial."
+        },
+        {
+            "id": 4,
+            "name": "Coque iPhone 15 Pro",
+            "brand": "Tech Store",
+            "category": "coques",
+            "gender": "Tous",
+            "price": 5000,
+            "old_price": null,
+            "stock": 50,
+            "badge": "",
+            "rating": 78,
+            "image": "https://images.unsplash.com/photo-1603313011101-320f26a4f6f6?w=400",
+            "images": [],
+            "description": "Coque de protection transparente avec bords renforcés."
+        },
+        {
+            "id": 5,
+            "name": "Chargeur Rapide 65W",
+            "brand": "Anker",
+            "category": "accessoires",
+            "gender": "Tous",
+            "price": 15000,
+            "old_price": null,
+            "stock": 40,
+            "badge": "populaire",
+            "rating": 234,
+            "image": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400",
+            "images": [],
+            "description": "Chargeur rapide GaN 65W avec 3 ports USB-C."
+        }
+    ],
+    "featured": [1, 3, 5],
+    "customers": [],
+    "orders": [],
+    "settings": {
+        "currency": "FCFA",
+        "theme": "theme-2-bleu",
+        "whatsapp_message": "Bonjour Tech Store, je suis intéressé par :"
+    }
+}

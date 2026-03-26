@@ -1,0 +1,203 @@
+{
+    "site": {
+        "name": "Sacs & Co",
+        "tagline": "Sacs à Main & Accessoires",
+        "description": "Découvrez notre collection de sacs à main, sacs à dos et accessoires. Des pièces tendance et intemporelles pour compléter votre style.",
+        "phone": "22890000000",
+        "email": "contact@sacs-and-co.tg",
+        "address": "Lomé, Togo",
+        "logo": "logo.png",
+        "stats": {
+            "products": "100+",
+            "rating": "4.8",
+            "delivery": "24h"
+        }
+    },
+    "categories": [
+        {
+            "id": "tous",
+            "name": "Tous",
+            "icon": "✨",
+            "count": 5
+        },
+        {
+            "id": "sacs-main",
+            "name": "Sacs à Main",
+            "icon": "👜",
+            "count": 2
+        },
+        {
+            "id": "sacs-dos",
+            "name": "Sacs à Dos",
+            "icon": "🎒",
+            "count": 1
+        },
+        {
+            "id": "pochettes",
+            "name": "Pochettes",
+            "icon": "👛",
+            "count": 1
+        },
+        {
+            "id": "cabas",
+            "name": "Cabas",
+            "icon": "🛍️",
+            "count": 1
+        }
+    ],
+    "genders": [
+        "Tous",
+        "Femme",
+        "Homme",
+        "Mixte"
+    ],
+    "products": [
+        {
+            "id": 1,
+            "name": "Sac Cuir Milano",
+            "brand": "Milano Craft",
+            "category": "sacs-main",
+            "gender": "Femme",
+            "price": 45000,
+            "old_price": null,
+            "stock": 10,
+            "badge": "nouveau",
+            "rating": 78,
+            "image": "https:\/\/images.unsplash.com\/photo-1584917865442-de89df76afd3?w=400",
+            "images": [
+                "https:\/\/images.unsplash.com\/photo-1566150905458-1bf1fc113f0d?w=400",
+                "https:\/\/images.unsplash.com\/photo-1590874103328-eac38a683ce7?w=400"
+            ],
+            "description": "Sac à main en cuir italien véritable. Finition artisanale et doublure en suede."
+        },
+        {
+            "id": 2,
+            "name": "Mini Bag Croco",
+            "brand": "LuxStyle",
+            "category": "sacs-main",
+            "gender": "Femme",
+            "price": 28000,
+            "old_price": 35000,
+            "stock": 18,
+            "badge": "promo",
+            "rating": 45,
+            "image": "https:\/\/images.unsplash.com\/photo-1566150905458-1bf1fc113f0d?w=400",
+            "images": [],
+            "description": "Mini sac tendance avec motif croco. Chaîne dorée détachable."
+        },
+        {
+            "id": 3,
+            "name": "Sac à Dos Premium",
+            "brand": "UrbanChic",
+            "category": "sacs-dos",
+            "gender": "Mixte",
+            "price": 25000,
+            "old_price": null,
+            "stock": 22,
+            "badge": "populaire",
+            "rating": 156,
+            "image": "https:\/\/images.unsplash.com\/photo-1553062407-98eeb64c6a62?w=400",
+            "images": [
+                "https:\/\/images.unsplash.com\/photo-1622560480605-d83c853bc5c3?w=400"
+            ],
+            "description": "Sac à dos spacieux avec compartiment ordinateur. Idéal pour le travail."
+        },
+        {
+            "id": 4,
+            "name": "Pochette Soirée",
+            "brand": "Élégance",
+            "category": "pochettes",
+            "gender": "Femme",
+            "price": 12000,
+            "old_price": null,
+            "stock": 30,
+            "badge": "",
+            "rating": 89,
+            "image": "https:\/\/images.unsplash.com\/photo-1563903530908-afdd155d057a?w=400",
+            "images": [],
+            "description": "Pochette élégante pour soirée. Chaîne dorée incluse."
+        },
+        {
+            "id": 5,
+            "name": "Tote Bag Coton",
+            "brand": "EcoBag",
+            "category": "cabas",
+            "gender": "Mixte",
+            "price": 8000,
+            "old_price": 10000,
+            "stock": 50,
+            "badge": "promo",
+            "rating": 234,
+            "image": "https:\/\/images.unsplash.com\/photo-1544816155-12df9643f363?w=400",
+            "images": [],
+            "description": "Tote bag en coton bio. Écologique et pratique pour le quotidien."
+        }
+    ],
+    "featured": [
+        1,
+        3,
+        5
+    ],
+    "customers": [
+        {
+            "id": "CUST_1774529797",
+            "firstname": "scott",
+            "lastname": "cody",
+            "phone": "70654865",
+            "quartier": "segbe",
+            "created_at": "2026-03-26 13:56:37",
+            "order_count": 1
+        }
+    ],
+    "orders": [
+        {
+            "id": "ORD_1774529797",
+            "customer_id": "CUST_1774529797",
+            "customer_name": "scott cody",
+            "customer_phone": "70654865",
+            "customer_quartier": "segbe",
+            "items": [
+                {
+                    "product_id": 5,
+                    "name": "Tote Bag Coton",
+                    "brand": "EcoBag",
+                    "price": 8000,
+                    "quantity": 6
+                },
+                {
+                    "product_id": 3,
+                    "name": "Sac à Dos Premium",
+                    "brand": "UrbanChic",
+                    "price": 25000,
+                    "quantity": 1
+                },
+                {
+                    "product_id": 2,
+                    "name": "Mini Bag Croco",
+                    "brand": "LuxStyle",
+                    "price": 28000,
+                    "quantity": 1
+                },
+                {
+                    "product_id": 1,
+                    "name": "Sac Cuir Milano",
+                    "brand": "Milano Craft",
+                    "price": 45000,
+                    "quantity": 1
+                }
+            ],
+            "total": 146000,
+            "status": "terminee",
+            "delivery_status": "livre",
+            "delivery_name": "",
+            "delivery_phone": "",
+            "created_at": "2026-03-26 13:56:37",
+            "updated_at": "2026-03-26 13:57:17"
+        }
+    ],
+    "settings": {
+        "currency": "FCFA",
+        "theme": "theme-1-rose",
+        "whatsapp_message": "Bonjour Sacs & Co, je commande :"
+    }
+}

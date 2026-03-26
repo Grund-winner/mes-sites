@@ -1,0 +1,59 @@
+/**
+ * THEME 4: OR LUXE
+ * Couleurs: Or, Noir, Blanc
+ * Idéal pour: Montres, Bijoux, Luxe
+ */
+
+:root {
+    --primary: #d4af37;
+    --primary-dark: #b8941f;
+    --primary-light: #f4e4a6;
+    --secondary: #c9a227;
+    --secondary-dark: #a88420;
+    --accent: #ffd700;
+    --dark: #1a1a1a;
+    --light: #faf8f3;
+    --gray: #6b7280;
+    --gray-light: #9ca3af;
+    --border: #e5e0d5;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+    --bg-gradient-start: #faf8f3;
+    --bg-gradient-mid: #f5f0e6;
+    --bg-gradient-end: #ebe5d5;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(212, 175, 55, 0.2);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #1a1a1a;
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--primary);
+    background: rgba(212, 175, 55, 0.08);
+}
+
+.product-modal-category {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--primary-dark);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-dark);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.stat-card-icon.pink { background: rgba(212, 175, 55, 0.15); color: var(--primary-dark); }
+.stat-card-icon.purple { background: rgba(201, 162, 39, 0.15); color: var(--secondary-dark); }
+
+.footer {
+    background: var(--dark);
+}
