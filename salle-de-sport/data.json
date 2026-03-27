@@ -1,0 +1,145 @@
+{
+    "site": {
+        "name": "PowerFit Gym",
+        "tagline": "Transformez votre corps, révélez votre potentiel",
+        "description": "La salle de sport moderne avec équipements de qualité, coachs diplômés et programmes personnalisés. Rejoignez la communauté PowerFit !",
+        "phone": "22890000000",
+        "email": "contact@powerfit-gym.tg",
+        "address": "Quartier administratif, Lomé, Togo",
+        "logo": "logo.png",
+        "hours": {
+            "weekdays": "5h00 - 22h00",
+            "weekend": "7h00 - 20h00"
+        }
+    },
+    "tarifs": [
+        {
+            "id": 1,
+            "name": "Découverte",
+            "price": 15000,
+            "duration": "1 mois",
+            "features": [
+                "Accès salle de musculation",
+                "Horaires standards",
+                "Casier personnel",
+                "1 séance avec coach"
+            ],
+            "popular": false
+        },
+        {
+            "id": 2,
+            "name": "Premium",
+            "price": 35000,
+            "duration": "3 mois",
+            "features": [
+                "Accès illimité 7j\/7",
+                "Tous les cours collectifs",
+                "Suivi personnalisé",
+                "Programme nutrition",
+                "3 séances avec coach",
+                "Accès sauna"
+            ],
+            "popular": true
+        },
+        {
+            "id": 3,
+            "name": "Elite",
+            "price": 80000,
+            "duration": "12 mois",
+            "features": [
+                "Accès VIP 24h\/24",
+                "Coach personnel dédié",
+                "Programme sur mesure",
+                "Suivi nutrition complet",
+                "Accès tous services",
+                "Produits offerts"
+            ],
+            "popular": false
+        }
+    ],
+    "services": [
+        {
+            "id": 1,
+            "name": "Musculation",
+            "icon": "fa-dumbbell",
+            "description": "Équipements dernière génération pour tous les niveaux"
+        },
+        {
+            "id": 2,
+            "name": "Cardio Training",
+            "icon": "fa-heartbeat",
+            "description": "Tapis, vélos, elliptiques avec écrans connectés"
+        },
+        {
+            "id": 3,
+            "name": "Cours Collectifs",
+            "icon": "fa-users",
+            "description": "Yoga, Zumba, Body Pump, Cycling et plus"
+        },
+        {
+            "id": 4,
+            "name": "Coaching Personnel",
+            "icon": "fa-user-tie",
+            "description": "Programmes personnalisés avec coachs diplômés"
+        },
+        {
+            "id": 5,
+            "name": "Nutrition",
+            "icon": "fa-apple-alt",
+            "description": "Plans alimentaires et suivi diététique"
+        },
+        {
+            "id": 6,
+            "name": "Sauna & Détente",
+            "icon": "fa-spa",
+            "description": "Espace bien-être pour récupération optimale"
+        }
+    ],
+    "testimonials": [
+        {
+            "id": 1,
+            "name": "Koffi Mensah",
+            "avatar": "https:\/\/randomuser.me\/api\/portraits\/men\/32.jpg",
+            "text": "En 6 mois, j'ai transformé mon physique ! Les coachs sont exceptionnels et l'ambiance motivante. Je recommande à 100% !",
+            "rating": 5,
+            "result": "-15kg en 6 mois"
+        },
+        {
+            "id": 2,
+            "name": "Aminata Sow",
+            "avatar": "https:\/\/randomuser.me\/api\/portraits\/women\/44.jpg",
+            "text": "Les cours collectifs sont top ! Zumba le mardi, Yoga le jeudi. C'est devenu mon moment préféré de la semaine.",
+            "rating": 5,
+            "result": "Membre depuis 2 ans"
+        },
+        {
+            "id": 3,
+            "name": "Yao Koudjo",
+            "avatar": "https:\/\/randomuser.me\/api\/portraits\/men\/67.jpg",
+            "text": "Équipements au top, propre et climatisé. Le rapport qualité-prix est imbattable. Meilleure salle de Lomé !",
+            "rating": 5,
+            "result": "Membre Premium"
+        }
+    ],
+    "gallery": [
+        "https:\/\/images.unsplash.com\/photo-1534438327276-14e5300c3a48?w=600",
+        "https:\/\/images.unsplash.com\/photo-1571902943202-507ec2618e8f?w=600",
+        "https:\/\/images.unsplash.com\/photo-1540497077202-7c8a3999166f?w=600",
+        "https:\/\/images.unsplash.com\/photo-1571019614242-c5c5dee9f50b?w=600"
+    ],
+    "stats": {
+        "members": "500+",
+        "coaches": "8",
+        "years": "5",
+        "equipment": "100+"
+    },
+    "admin": {
+        "username": "admin",
+        "password": "$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC\/.og\/at2.uheWG\/igi"
+    },
+    "settings": {
+        "currency": "FCFA",
+        "theme": "theme-11-neon",
+        "whatsapp_message": "Bonjour PowerFit Gym, je souhaite m'inscrire !"
+    }
+}

@@ -3,10 +3,10 @@
         "name": "Saveurs d'Afrique",
         "tagline": "Restaurant & Livraison de Plats",
         "description": "Découvrez les saveurs authentiques de la cuisine africaine. Plats traditionnels préparés avec amour et livrés chez vous.",
-        "phone": "22890000000",
+        "phone": "22898211760",
         "email": "contact@saveursdafrique.tg",
         "address": "Lomé, Togo",
-        "logo": "logo.png",
+        "logo": null,
         "stats": {
             "products": "50+",
             "rating": "4.8",
@@ -14,13 +14,40 @@
         }
     },
     "categories": [
-        {"id": "tous", "name": "Tous", "icon": "✨", "count": 5},
-        {"id": "entrees", "name": "Entrées", "icon": "🥗", "count": 1},
-        {"id": "plats", "name": "Plats", "icon": "🍛", "count": 2},
-        {"id": "desserts", "name": "Desserts", "icon": "🍰", "count": 1},
-        {"id": "boissons", "name": "Boissons", "icon": "🥤", "count": 1}
+        {
+            "id": "tous",
+            "name": "Tous",
+            "icon": "✨",
+            "count": 5
+        },
+        {
+            "id": "entrees",
+            "name": "Entrées",
+            "icon": "🥗",
+            "count": 1
+        },
+        {
+            "id": "plats",
+            "name": "Plats",
+            "icon": "🍛",
+            "count": 2
+        },
+        {
+            "id": "desserts",
+            "name": "Desserts",
+            "icon": "🍰",
+            "count": 1
+        },
+        {
+            "id": "boissons",
+            "name": "Boissons",
+            "icon": "🥤",
+            "count": 1
+        }
     ],
-    "genders": ["Tous"],
+    "genders": [
+        "Tous"
+    ],
     "products": [
         {
             "id": 1,
@@ -33,7 +60,7 @@
             "stock": 50,
             "badge": "populaire",
             "rating": 245,
-            "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1604908176997-125f25cc6f3d?w=400",
             "images": [],
             "description": "Poulet frit accompagné de plantains et légumes sautés. Un classique camerounais."
         },
@@ -48,9 +75,9 @@
             "stock": 30,
             "badge": "promo",
             "rating": 189,
-            "image": "https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1534939561126-855b8675edd7?w=400",
             "images": [
-                "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400"
+                "https:\/\/images.unsplash.com\/photo-1519708227418-c8fd9a32b7a2?w=400"
             ],
             "description": "Attiéké frais servi avec du poisson braisé et sauce tomate épicée."
         },
@@ -65,7 +92,7 @@
             "stock": 40,
             "badge": "",
             "rating": 67,
-            "image": "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1550304943-4f24f54ddde9?w=400",
             "images": [],
             "description": "Salade fraîche avec poulet grillé, croûtons et sauce César maison."
         },
@@ -80,7 +107,7 @@
             "stock": 20,
             "badge": "nouveau",
             "rating": 92,
-            "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1571877227200-a0d98ea607e9?w=400",
             "images": [],
             "description": "Tiramisu italien préparé avec mascarpone et café espresso."
         },
@@ -95,17 +122,25 @@
             "stock": 100,
             "badge": "",
             "rating": 156,
-            "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1513558161293-cdaf765ed2fd?w=400",
             "images": [],
             "description": "Jus frais de bissap (oseille de Guinée) sucré au goût."
         }
     ],
-    "featured": [1, 2, 4],
+    "featured": [
+        1,
+        2,
+        4
+    ],
     "customers": [],
     "orders": [],
     "settings": {
         "currency": "FCFA",
         "theme": "theme-3-vert",
         "whatsapp_message": "Bonjour Saveurs d'Afrique, je commande :"
+    },
+    "admin": {
+        "username": "admin",
+        "password": "$2y$10$yjXvoqIrnswDZJgQIx8a1.psC5J1Ahf7QUQZWPwmmu8a4OTaECG8W"
     }
 }

@@ -1,0 +1,327 @@
+/**
+ * THEME 12: MINIMALISTE PRO
+ * Couleurs: Gris slate, Blanc, Noir
+ * Idéal pour: Sites professionnels, Services, B2B
+ * Design: Épuré, élégant, professionnel
+ */
+
+:root {
+    --primary: #64748b;
+    --primary-dark: #475569;
+    --primary-light: #cbd5e1;
+    --secondary: #94a3b8;
+    --secondary-dark: #64748b;
+    --accent: #3b82f6;
+    --dark: #0f172a;
+    --light: #f8fafc;
+    --gray: #64748b;
+    --gray-light: #94a3b8;
+    --border: #e2e8f0;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+    --bg-gradient-start: #ffffff;
+    --bg-gradient-mid: #f8fafc;
+    --bg-gradient-end: #f1f5f9;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(15, 23, 42, 0.08);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+    color: var(--dark);
+}
+
+/* Boutons sobres */
+.btn-primary, .btn-add-cart, .btn-add-modal {
+    background: var(--dark);
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover, .btn-add-cart:hover, .btn-add-modal:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Cards épurées */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.product-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: none;
+    transition: all 0.2s ease;
+}
+
+.product-card:hover {
+    border-color: var(--dark);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Header minimaliste */
+.header {
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom: 1px solid var(--border);
+}
+
+/* Catégories */
+.category-btn {
+    background: var(--light);
+    border: 1px solid var(--border);
+}
+
+.category-btn:hover, .category-btn.active {
+    border-color: var(--dark);
+    background: var(--dark);
+    color: white;
+}
+
+/* Sidebar */
+.sidebar {
+    background: var(--card-bg);
+    border-right: 1px solid var(--border);
+}
+
+.nav-item {
+    color: var(--gray);
+    border-radius: 8px;
+}
+
+.nav-item:hover, .nav-item.active {
+    background: var(--light);
+    color: var(--dark);
+    font-weight: 500;
+}
+
+/* Badges minimalistes */
+.badge-nouveau {
+    background: var(--dark);
+    color: white;
+}
+
+.badge-promo {
+    background: var(--error);
+    color: white;
+}
+
+.badge-populaire {
+    background: var(--warning);
+    color: white;
+}
+
+/* Hero section */
+.hero::before {
+    background: radial-gradient(circle, rgba(100, 116, 139, 0.08) 0%, transparent 70%);
+}
+
+.hero::after {
+    background: radial-gradient(circle, rgba(148, 163, 184, 0.08) 0%, transparent 70%);
+}
+
+/* Stats cards */
+.stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+}
+
+.stat-card-icon.pink { 
+    background: var(--light); 
+    color: var(--dark);
+}
+
+.stat-card-icon.purple { 
+    background: var(--light); 
+    color: var(--gray);
+}
+
+/* Forms */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--dark);
+    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.05);
+}
+
+/* Tables */
+th {
+    color: var(--gray);
+    border-bottom: 2px solid var(--border);
+}
+
+tr:hover td {
+    background: var(--light);
+}
+
+/* Modal */
+.modal {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border);
+}
+
+/* Theme selector */
+.theme-card {
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+}
+
+.theme-card:hover {
+    border-color: var(--gray);
+}
+
+.theme-card.active {
+    border-color: var(--dark);
+    background: var(--light);
+}
+
+/* Product modal category */
+.product-modal-category {
+    background: var(--light);
+    color: var(--dark);
+}
+
+/* Gallery items */
+.gallery-item:hover,
+.gallery-item.selected {
+    border-color: var(--dark);
+}
+
+/* Carousel */
+.carousel-nav {
+    background: var(--card-bg);
+    color: var(--dark);
+    border: 1px solid var(--border);
+}
+
+.carousel-thumb.active {
+    border-color: var(--dark);
+}
+
+/* Login page */
+.login-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Badges status */
+.badge-success { 
+    background: #dcfce7; 
+    color: #166534; 
+}
+
+.badge-warning { 
+    background: #fef3c7; 
+    color: #92400e; 
+}
+
+.badge-info { 
+    background: #dbeafe; 
+    color: #1e40af; 
+}
+
+.badge-danger { 
+    background: #fee2e2; 
+    color: #991b1b; 
+}
+
+/* Alerts */
+.alert-success {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+}
+
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gray-light);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gray);
+}
+
+/* WhatsApp button */
+.btn-whatsapp {
+    background: var(--dark);
+    box-shadow: none;
+}
+
+.btn-whatsapp:hover {
+    background: var(--primary-dark);
+}
+
+/* Responsive mobile */
+@media (max-width: 768px) {
+    .product-card {
+        border-radius: 8px;
+    }
+    
+    .category-btn {
+        border-radius: 8px;
+    }
+    
+    .btn-add-cart {
+        border-radius: 6px;
+    }
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+/* Borders */
+.sidebar,
+.card-header,
+.modal-header {
+    border-color: var(--border);
+}
+
+/* Focus states */
+*:focus {
+    outline: 2px solid var(--dark);
+    outline-offset: 2px;
+}
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+}

@@ -14,13 +14,43 @@
         }
     },
     "categories": [
-        {"id": "tous", "name": "Tous", "icon": "✨", "count": 10},
-        {"id": "luxury", "name": "Luxe", "icon": "💎", "count": 3},
-        {"id": "classique", "name": "Classique", "icon": "⌚", "count": 3},
-        {"id": "sport", "name": "Sport", "icon": "🏃", "count": 2},
-        {"id": "connectees", "name": "Connectées", "icon": "📲", "count": 2}
+        {
+            "id": "tous",
+            "name": "Tous",
+            "icon": "✨",
+            "count": 5
+        },
+        {
+            "id": "luxury",
+            "name": "Luxe",
+            "icon": "💎",
+            "count": 2
+        },
+        {
+            "id": "classique",
+            "name": "Classique",
+            "icon": "⌚",
+            "count": 1
+        },
+        {
+            "id": "sport",
+            "name": "Sport",
+            "icon": "🏃",
+            "count": 1
+        },
+        {
+            "id": "connectees",
+            "name": "Connectées",
+            "icon": "📲",
+            "count": 1
+        }
     ],
-    "genders": ["Tous", "Homme", "Femme", "Mixte"],
+    "genders": [
+        "Tous",
+        "Homme",
+        "Femme",
+        "Mixte"
+    ],
     "products": [
         {
             "id": 1,
@@ -33,10 +63,10 @@
             "stock": 5,
             "badge": "promo",
             "rating": 89,
-            "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1523275335684-37898b6baf30?w=400",
             "images": [
-                "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400",
-                "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400"
+                "https:\/\/images.unsplash.com\/photo-1524592094714-0f0654e20314?w=400",
+                "https:\/\/images.unsplash.com\/photo-1614164185128-e4ec99c436d7?w=400"
             ],
             "description": "Montre chronographe plaqué or 18K. Mouvement automatique suisse, bracelet cuir."
         },
@@ -51,7 +81,7 @@
             "stock": 3,
             "badge": "nouveau",
             "rating": 56,
-            "image": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1522312346375-d1a52e2b99b3?w=400",
             "images": [],
             "description": "Montre féminine sertie de diamants. Bracelet en acier inoxydable."
         },
@@ -66,9 +96,9 @@
             "stock": 15,
             "badge": "populaire",
             "rating": 178,
-            "image": "https://images.unsplash.com/photo-1539874754764-5a96559165b0?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1539874754764-5a96559165b0?w=400",
             "images": [
-                "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400"
+                "https:\/\/images.unsplash.com\/photo-1523170335258-f5ed11844a49?w=400"
             ],
             "description": "Montre de sport étanche 100m avec chronomètre et luminescence."
         },
@@ -83,7 +113,7 @@
             "stock": 20,
             "badge": "promo",
             "rating": 234,
-            "image": "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1434493789847-2f02dc6ca35d?w=400",
             "images": [],
             "description": "Montre connectée avec GPS, cardio, suivi du sommeil."
         },
@@ -98,17 +128,25 @@
             "stock": 25,
             "badge": "",
             "rating": 112,
-            "image": "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400",
+            "image": "https:\/\/images.unsplash.com\/photo-1524592094714-0f0654e20314?w=400",
             "images": [],
             "description": "Montre classique avec bracelet cuir véritable. Style intemporel."
         }
     ],
-    "featured": [1, 3, 4],
+    "featured": [
+        1,
+        3,
+        4
+    ],
     "customers": [],
     "orders": [],
     "settings": {
         "currency": "FCFA",
         "theme": "theme-4-or",
         "whatsapp_message": "Bonjour Time Luxury, je suis intéressé par :"
+    },
+    "admin": {
+        "username": "admin",
+        "password": "$2y$10$raUfw1XH51z5JbqvW4t4c.6Hr8G1JrZp2ouSeX.TH0k9dubYrGMj2"
     }
 }

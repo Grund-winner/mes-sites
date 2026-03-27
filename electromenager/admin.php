@@ -1,18 +1,15 @@
 <?php
 /**
- * E-COMMERCE MODULAIRE - ADMIN.PHP CORRIGÉ
+ * E-COMMERCE MODULAIRE - ADMIN.PHP V3.0 AMÉLIORÉ
  * 
  * Panneau d'administration complet avec:
- * - Gestion des produits (CRUD) avec jusqu'à 5 images
- * - Galerie d'images locale pour sélectionner les images
- * - Changement de thème en temps réel (10 thèmes prédéfinis)
- * - Gestion des commandes et livreurs
- * - Gestion des catégories
- * - Modification des informations du site
- * - Changement de mot de passe admin
- * - TOUTES LES PAGES IMPLÉMENTÉES
+ * - Gestion des produits (CRUD) avec upload d'images local
+ * - Changement de mot de passe admin SAUVEGARDÉ dans data.json
+ * - Reset des statistiques avec confirmation sécurisée
+ * - Galerie d'images locale
+ * - Changement de thème en temps réel (12 thèmes)
  * 
- * @version 2.1 FIXED
+ * @version 3.0 IMPROVED
  * @author Assistant IA
  */
 
@@ -28,15 +25,14 @@ define('DATA_FILE', 'data.json');
 // Dossier des uploads
 define('UPLOADS_DIR', 'uploads/');
 define('GALLERY_DIR', UPLOADS_DIR . 'gallery/');
+define('PRODUCTS_DIR', UPLOADS_DIR . 'products/');
 
-// Configuration admin (à modifier après première connexion)
-$adminConfig = [
-    'username' => 'admin',
-    'password' => password_hash('admin123', PASSWORD_DEFAULT),
-    'session_timeout' => 3600
-];
+// Créer les dossiers s'ils n'existent pas
+if (!is_dir(UPLOADS_DIR)) mkdir(UPLOADS_DIR, 0755, true);
+if (!is_dir(GALLERY_DIR)) mkdir(GALLERY_DIR, 0755, true);
+if (!is_dir(PRODUCTS_DIR)) mkdir(PRODUCTS_DIR, 0755, true);
 
-// Thèmes disponibles
+// Thèmes disponibles (10 originaux + 2 nouveaux)
 $availableThemes = [
     'theme-1-rose' => ['name' => 'Rose Pink', 'color' => '#ec4899', 'icon' => '🌸', 'desc' => 'Idéal pour cosmétiques et beauté'],
     'theme-2-bleu' => ['name' => 'Bleu Océan', 'color' => '#0ea5e9', 'icon' => '🌊', 'desc' => 'Parfait pour tech et téléphones'],
@@ -48,6 +44,8 @@ $availableThemes = [
     'theme-8-noir' => ['name' => 'Noir Élégant', 'color' => '#1f2937', 'icon' => '🖤', 'desc' => 'Sophistiqué pour luxe masculin'],
     'theme-9-turquoise' => ['name' => 'Turquoise Tropical', 'color' => '#14b8a6', 'icon' => '🏝️', 'desc' => 'Exotique pour sacs et plage'],
     'theme-10-marron' => ['name' => 'Marron Cuir', 'color' => '#92400e', 'icon' => '🤎', 'desc' => 'Chaleureux pour cuir et accessoires'],
+    'theme-11-neon' => ['name' => 'Néon Futuriste', 'color' => '#00ff88', 'icon' => '⚡', 'desc' => 'Moderne et vibrant pour sport'],
+    'theme-12-minimal' => ['name' => 'Minimaliste', 'color' => '#64748b', 'icon' => '◽', 'desc' => 'Épuré et professionnel'],
 ];
 
 // ============================================================================
@@ -62,11 +60,47 @@ function loadData() {
             return $data;
         }
     }
-    return [];
+    return getDefaultData();
+}
+
+function getDefaultData() {
+    return [
+        'site' => [
+            'name' => 'Ma Boutique',
+            'tagline' => 'Votre shopping en ligne',
+            'description' => 'Découvrez notre sélection de produits de qualité.',
+            'phone' => '22890000000',
+            'email' => 'contact@maboutique.tg',
+            'address' => 'Lomé, Togo',
+            'logo' => 'logo.png',
+            'stats' => [
+                'products' => '100+',
+                'rating' => '4.8',
+                'delivery' => '24h'
+            ]
+        ],
+        'categories' => [
+            ['id' => 'tous', 'name' => 'Tous', 'icon' => '✨', 'count' => 0],
+        ],
+        'genders' => ['Tous', 'Femme', 'Homme', 'Mixte'],
+        'products' => [],
+        'featured' => [],
+        'customers' => [],
+        'orders' => [],
+        'admin' => [
+            'username' => 'admin',
+            'password' => password_hash('admin123', PASSWORD_DEFAULT)
+        ],
+        'settings' => [
+            'currency' => 'FCFA',
+            'theme' => 'theme-1-rose',
+            'whatsapp_message' => 'Bonjour, je souhaite commander :'
+        ]
+    ];
 }
 
 function saveData($data) {
-    // Recalculer les compteurs de catégories avant de sauvegarder
+    // Recalculer les compteurs de catégories
     if (isset($data['categories']) && isset($data['products'])) {
         foreach ($data['categories'] as &$category) {
             if ($category['id'] === 'tous') {
@@ -86,6 +120,27 @@ function saveData($data) {
 }
 
 // ============================================================================
+// CHARGEMENT INITIAL DES DONNÉES
+// ============================================================================
+
+$data = loadData();
+
+// Initialiser les structures si elles n'existent pas
+if (!isset($data['customers'])) $data['customers'] = [];
+if (!isset($data['orders'])) $data['orders'] = [];
+if (!isset($data['products'])) $data['products'] = [];
+if (!isset($data['categories'])) $data['categories'] = [];
+if (!isset($data['site'])) $data['site'] = ['name' => 'Ma Boutique'];
+if (!isset($data['admin'])) {
+    $data['admin'] = [
+        'username' => 'admin',
+        'password' => password_hash('admin123', PASSWORD_DEFAULT)
+    ];
+    saveData($data);
+}
+if (!isset($data['settings']['theme'])) $data['settings']['theme'] = 'theme-1-rose';
+
+// ============================================================================
 // VÉRIFICATION DE CONNEXION
 // ============================================================================
 
@@ -102,10 +157,9 @@ function isLoggedIn() {
 }
 
 // Rediriger si non connecté
+$showLogin = false;
 if (!isLoggedIn() && !isset($_POST['login'])) {
     $showLogin = true;
-} else {
-    $showLogin = false;
 }
 
 // ============================================================================
@@ -117,7 +171,7 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    if ($username === $adminConfig['username'] && password_verify($password, $adminConfig['password'])) {
+    if ($username === $data['admin']['username'] && password_verify($password, $data['admin']['password'])) {
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_last_activity'] = time();
         header('Location: admin.php');
@@ -136,104 +190,187 @@ if (isset($_GET['logout'])) {
 }
 
 // ============================================================================
-// CHARGEMENT DES DONNÉES
-// ============================================================================
-
-$data = loadData();
-
-// Initialiser les structures si elles n'existent pas
-if (!isset($data['customers'])) $data['customers'] = [];
-if (!isset($data['orders'])) $data['orders'] = [];
-if (!isset($data['settings']['theme'])) $data['settings']['theme'] = 'theme-1-rose';
-if (!isset($data['products'])) $data['products'] = [];
-if (!isset($data['categories'])) $data['categories'] = [];
-if (!isset($data['site'])) $data['site'] = ['name' => 'Ma Boutique'];
-
-// Page active
-$page = $_GET['page'] ?? 'dashboard';
-
-// ============================================================================
 // TRAITEMENT DES ACTIONS
 // ============================================================================
 
 $message = '';
 $messageType = '';
+$page = $_GET['page'] ?? 'dashboard';
 
-// Mettre à jour le statut d'une commande
-if (isset($_POST['update_order_status'])) {
-    $orderId = $_POST['order_id'];
-    foreach ($data['orders'] as &$order) {
-        if ($order['id'] === $orderId) {
-            $order['status'] = $_POST['status'];
-            $order['delivery_status'] = $_POST['delivery_status'];
-            $order['delivery_name'] = $_POST['delivery_name'] ?? '';
-            $order['delivery_phone'] = $_POST['delivery_phone'] ?? '';
-            $order['updated_at'] = date('Y-m-d H:i:s');
-            break;
-        }
+// ============================================================================
+// 1. CHANGEMENT DE MOT DE PASSE (CORRIGÉ - SAUVEGARDE DANS data.json)
+// ============================================================================
+
+if (isset($_POST['change_password'])) {
+    $currentPassword = $_POST['current_password'] ?? '';
+    $newPassword = $_POST['new_password'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
+    
+    // Vérifier l'ancien mot de passe
+    if (!password_verify($currentPassword, $data['admin']['password'])) {
+        $message = 'Mot de passe actuel incorrect';
+        $messageType = 'error';
+    } elseif ($newPassword !== $confirmPassword) {
+        $message = 'Les nouveaux mots de passe ne correspondent pas';
+        $messageType = 'error';
+    } elseif (strlen($newPassword) < 6) {
+        $message = 'Le mot de passe doit contenir au moins 6 caractères';
+        $messageType = 'error';
+    } else {
+        // Sauvegarder le nouveau mot de passe hashé dans data.json
+        $data['admin']['password'] = password_hash($newPassword, PASSWORD_DEFAULT);
+        saveData($data);
+        $message = 'Mot de passe modifié avec succès !';
+        $messageType = 'success';
     }
-    saveData($data);
-    $message = 'Statut de la commande mis à jour';
-    $messageType = 'success';
-}
-
-// Sauvegarder les paramètres du site
-if (isset($_POST['save_site_settings'])) {
-    $data['site']['name'] = $_POST['site_name'];
-    $data['site']['tagline'] = $_POST['site_tagline'];
-    $data['site']['description'] = $_POST['site_description'];
-    $data['site']['phone'] = $_POST['site_phone'];
-    $data['site']['email'] = $_POST['site_email'];
-    $data['site']['address'] = $_POST['site_address'];
-    $data['site']['logo'] = $_POST['site_logo'];
-    $data['site']['stats']['products'] = $_POST['stat_products'];
-    $data['site']['stats']['rating'] = $_POST['stat_rating'];
-    $data['site']['stats']['delivery'] = $_POST['stat_delivery'];
-    saveData($data);
-    $message = 'Paramètres du site sauvegardés';
-    $messageType = 'success';
-}
-
-// Changer le thème
-if (isset($_POST['change_theme'])) {
-    $data['settings']['theme'] = $_POST['theme'];
-    saveData($data);
-    $message = 'Thème changé avec succès';
-    $messageType = 'success';
-}
-
-// Sauvegarder les paramètres généraux
-if (isset($_POST['save_general_settings'])) {
-    $data['settings']['currency'] = $_POST['currency'];
-    $data['settings']['whatsapp_message'] = $_POST['whatsapp_message'];
-    saveData($data);
-    $message = 'Paramètres généraux sauvegardés';
-    $messageType = 'success';
 }
 
 // ============================================================================
-// GESTION DES PRODUITS AVEC IMAGES MULTIPLES
+// 2. RESET DES STATISTIQUES (NOUVEAU)
+// ============================================================================
+
+if (isset($_POST['reset_stats'])) {
+    $confirmUsername = $_POST['confirm_username'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
+    $resetType = $_POST['reset_type'] ?? '';
+    
+    // Vérifier les identifiants
+    if ($confirmUsername !== $data['admin']['username'] || !password_verify($confirmPassword, $data['admin']['password'])) {
+        $message = 'Identifiants incorrects. Action annulée.';
+        $messageType = 'error';
+    } else {
+        switch ($resetType) {
+            case 'orders':
+                $data['orders'] = [];
+                $message = 'Toutes les commandes ont été supprimées';
+                break;
+            case 'customers':
+                $data['customers'] = [];
+                $data['orders'] = []; // Supprimer aussi les commandes
+                $message = 'Tous les clients et leurs commandes ont été supprimés';
+                break;
+            case 'products':
+                $data['products'] = [];
+                $data['orders'] = [];
+                $message = 'Tous les produits et commandes ont été supprimés';
+                break;
+            case 'all':
+                $data['orders'] = [];
+                $data['customers'] = [];
+                $data['products'] = [];
+                $message = 'Toutes les données ont été réinitialisées';
+                break;
+            default:
+                $message = 'Type de réinitialisation non valide';
+                $messageType = 'error';
+        }
+        if ($messageType !== 'error') {
+            saveData($data);
+            $messageType = 'success';
+        }
+    }
+}
+
+// ============================================================================
+// 3. UPLOAD D'IMAGES PRODUITS (AMÉLIORÉ)
+// ============================================================================
+
+// Upload d'image pour la galerie
+if (isset($_POST['upload_image'])) {
+    if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $maxSize = 5 * 1024 * 1024; // 5MB
+        
+        if (!in_array($_FILES['image_file']['type'], $allowedTypes)) {
+            $message = 'Type de fichier non autorisé. Utilisez JPG, PNG, GIF ou WebP.';
+            $messageType = 'error';
+        } elseif ($_FILES['image_file']['size'] > $maxSize) {
+            $message = 'Le fichier est trop volumineux (max 5MB)';
+            $messageType = 'error';
+        } else {
+            $extension = pathinfo($_FILES['image_file']['name'], PATHINFO_EXTENSION);
+            $fileName = 'img_' . time() . '_' . rand(1000, 9999) . '.' . $extension;
+            $targetPath = GALLERY_DIR . $fileName;
+            
+            if (move_uploaded_file($_FILES['image_file']['tmp_name'], $targetPath)) {
+                $message = 'Image uploadée avec succès !';
+                $messageType = 'success';
+            } else {
+                $message = 'Erreur lors de l\'upload. Vérifiez les permissions du dossier.';
+                $messageType = 'error';
+            }
+        }
+    } else {
+        $message = 'Aucun fichier sélectionné ou erreur d\'upload';
+        $messageType = 'error';
+    }
+}
+
+// Upload d'image produit direct
+if (isset($_FILES['product_image_upload']) && $_FILES['product_image_upload']['error'] === UPLOAD_ERR_OK) {
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    $maxSize = 5 * 1024 * 1024;
+    
+    if (in_array($_FILES['product_image_upload']['type'], $allowedTypes) && $_FILES['product_image_upload']['size'] <= $maxSize) {
+        $extension = pathinfo($_FILES['product_image_upload']['name'], PATHINFO_EXTENSION);
+        $fileName = 'product_' . time() . '_' . rand(1000, 9999) . '.' . $extension;
+        $targetPath = PRODUCTS_DIR . $fileName;
+        
+        if (move_uploaded_file($_FILES['product_image_upload']['tmp_name'], $targetPath)) {
+            // Retourner l'URL pour le formulaire
+            $uploadedImageUrl = PRODUCTS_DIR . $fileName;
+        }
+    }
+}
+
+// Supprimer une image de la galerie
+if (isset($_GET['delete_gallery_image'])) {
+    $imageName = basename($_GET['delete_gallery_image']);
+    $imagePath = GALLERY_DIR . $imageName;
+    if (file_exists($imagePath)) {
+        unlink($imagePath);
+        $message = 'Image supprimée';
+        $messageType = 'success';
+    }
+}
+
+// ============================================================================
+// GESTION DES PRODUITS
 // ============================================================================
 
 // Ajouter un produit
 if (isset($_POST['add_product'])) {
+    // Gérer l'upload d'image principale
+    $mainImage = $_POST['product_image'] ?? '';
+    
+    // Si un fichier a été uploadé, l'utiliser
+    if (isset($_FILES['product_main_image']) && $_FILES['product_main_image']['error'] === UPLOAD_ERR_OK) {
+        $extension = pathinfo($_FILES['product_main_image']['name'], PATHINFO_EXTENSION);
+        $fileName = 'product_' . time() . '_' . rand(1000, 9999) . '.' . $extension;
+        $targetPath = PRODUCTS_DIR . $fileName;
+        
+        if (move_uploaded_file($_FILES['product_main_image']['tmp_name'], $targetPath)) {
+            $mainImage = PRODUCTS_DIR . $fileName;
+        }
+    }
+    
     $newProduct = [
         'id' => time(),
         'name' => $_POST['product_name'],
-        'brand' => $_POST['product_brand'],
+        'brand' => $_POST['product_brand'] ?? '',
         'category' => $_POST['product_category'],
-        'gender' => $_POST['product_gender'],
+        'gender' => $_POST['product_gender'] ?? 'Mixte',
         'price' => intval($_POST['product_price']),
         'old_price' => $_POST['product_old_price'] ? intval($_POST['product_old_price']) : null,
-        'stock' => intval($_POST['product_stock']),
-        'badge' => $_POST['product_badge'],
-        'rating' => intval($_POST['product_rating']),
-        'image' => $_POST['product_image'],
+        'stock' => intval($_POST['product_stock'] ?? 0),
+        'badge' => $_POST['product_badge'] ?? '',
+        'rating' => intval($_POST['product_rating'] ?? 0),
+        'image' => $mainImage,
         'images' => [],
         'description' => $_POST['product_description'] ?? ''
     ];
     
-    // Ajouter les images supplémentaires (jusqu'à 5)
+    // Ajouter les images supplémentaires
     for ($i = 1; $i <= 5; $i++) {
         if (!empty($_POST['product_image_' . $i])) {
             $newProduct['images'][] = $_POST['product_image_' . $i];
@@ -251,19 +388,31 @@ if (isset($_POST['edit_product'])) {
     $productId = intval($_POST['product_id']);
     foreach ($data['products'] as &$product) {
         if ($product['id'] === $productId) {
+            // Gérer l'upload de nouvelle image principale
+            $mainImage = $_POST['product_image'];
+            
+            if (isset($_FILES['product_main_image']) && $_FILES['product_main_image']['error'] === UPLOAD_ERR_OK) {
+                $extension = pathinfo($_FILES['product_main_image']['name'], PATHINFO_EXTENSION);
+                $fileName = 'product_' . time() . '_' . rand(1000, 9999) . '.' . $extension;
+                $targetPath = PRODUCTS_DIR . $fileName;
+                
+                if (move_uploaded_file($_FILES['product_main_image']['tmp_name'], $targetPath)) {
+                    $mainImage = PRODUCTS_DIR . $fileName;
+                }
+            }
+            
             $product['name'] = $_POST['product_name'];
-            $product['brand'] = $_POST['product_brand'];
+            $product['brand'] = $_POST['product_brand'] ?? '';
             $product['category'] = $_POST['product_category'];
-            $product['gender'] = $_POST['product_gender'];
+            $product['gender'] = $_POST['product_gender'] ?? 'Mixte';
             $product['price'] = intval($_POST['product_price']);
             $product['old_price'] = $_POST['product_old_price'] ? intval($_POST['product_old_price']) : null;
-            $product['stock'] = intval($_POST['product_stock']);
-            $product['badge'] = $_POST['product_badge'];
-            $product['rating'] = intval($_POST['product_rating']);
-            $product['image'] = $_POST['product_image'];
+            $product['stock'] = intval($_POST['product_stock'] ?? 0);
+            $product['badge'] = $_POST['product_badge'] ?? '';
+            $product['rating'] = intval($_POST['product_rating'] ?? 0);
+            $product['image'] = $mainImage;
             $product['description'] = $_POST['product_description'] ?? '';
             
-            // Mettre à jour les images supplémentaires
             $product['images'] = [];
             for ($i = 1; $i <= 5; $i++) {
                 if (!empty($_POST['product_image_' . $i])) {
@@ -296,7 +445,7 @@ if (isset($_POST['add_category'])) {
     $newCategory = [
         'id' => strtolower(str_replace(' ', '-', $_POST['category_name'])),
         'name' => $_POST['category_name'],
-        'icon' => $_POST['category_icon'],
+        'icon' => $_POST['category_icon'] ?? '📦',
         'count' => 0
     ];
     $data['categories'][] = $newCategory;
@@ -315,68 +464,59 @@ if (isset($_GET['delete_category'])) {
 }
 
 // ============================================================================
-// UPLOAD D'IMAGES
+// GESTION DES COMMANDES
 // ============================================================================
 
-if (isset($_POST['upload_image'])) {
-    if (!is_dir(GALLERY_DIR)) {
-        mkdir(GALLERY_DIR, 0755, true);
-    }
-    
-    if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
-        $fileName = time() . '_' . basename($_FILES['image_file']['name']);
-        $targetPath = GALLERY_DIR . $fileName;
-        
-        // Vérifier le type de fichier
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        if (in_array($_FILES['image_file']['type'], $allowedTypes)) {
-            if (move_uploaded_file($_FILES['image_file']['tmp_name'], $targetPath)) {
-                $message = 'Image uploadée avec succès';
-                $messageType = 'success';
-            } else {
-                $message = 'Erreur lors de l\'upload';
-                $messageType = 'error';
-            }
-        } else {
-            $message = 'Type de fichier non autorisé';
-            $messageType = 'error';
+if (isset($_POST['update_order_status'])) {
+    $orderId = $_POST['order_id'];
+    foreach ($data['orders'] as &$order) {
+        if ($order['id'] === $orderId) {
+            $order['status'] = $_POST['status'];
+            $order['delivery_status'] = $_POST['delivery_status'];
+            $order['delivery_name'] = $_POST['delivery_name'] ?? '';
+            $order['delivery_phone'] = $_POST['delivery_phone'] ?? '';
+            $order['updated_at'] = date('Y-m-d H:i:s');
+            break;
         }
     }
-}
-
-// Supprimer une image de la galerie
-if (isset($_GET['delete_gallery_image'])) {
-    $imageName = basename($_GET['delete_gallery_image']);
-    $imagePath = GALLERY_DIR . $imageName;
-    if (file_exists($imagePath)) {
-        unlink($imagePath);
-        $message = 'Image supprimée';
-        $messageType = 'success';
-    }
+    saveData($data);
+    $message = 'Statut de la commande mis à jour';
+    $messageType = 'success';
 }
 
 // ============================================================================
-// CHANGEMENT DE MOT DE PASSE
+// PARAMÈTRES DU SITE
 // ============================================================================
 
-if (isset($_POST['change_password'])) {
-    $currentPassword = $_POST['current_password'];
-    $newPassword = $_POST['new_password'];
-    $confirmPassword = $_POST['confirm_password'];
-    
-    if (!password_verify($currentPassword, $adminConfig['password'])) {
-        $message = 'Mot de passe actuel incorrect';
-        $messageType = 'error';
-    } elseif ($newPassword !== $confirmPassword) {
-        $message = 'Les nouveaux mots de passe ne correspondent pas';
-        $messageType = 'error';
-    } elseif (strlen($newPassword) < 6) {
-        $message = 'Le mot de passe doit contenir au moins 6 caractères';
-        $messageType = 'error';
-    } else {
-        $message = 'Mot de passe changé avec succès (pensez à mettre à jour le fichier admin.php)';
-        $messageType = 'success';
-    }
+if (isset($_POST['save_site_settings'])) {
+    $data['site']['name'] = $_POST['site_name'];
+    $data['site']['tagline'] = $_POST['site_tagline'];
+    $data['site']['description'] = $_POST['site_description'];
+    $data['site']['phone'] = $_POST['site_phone'];
+    $data['site']['email'] = $_POST['site_email'];
+    $data['site']['address'] = $_POST['site_address'];
+    $data['site']['logo'] = $_POST['site_logo'];
+    $data['site']['stats']['products'] = $_POST['stat_products'];
+    $data['site']['stats']['rating'] = $_POST['stat_rating'];
+    $data['site']['stats']['delivery'] = $_POST['stat_delivery'];
+    saveData($data);
+    $message = 'Paramètres du site sauvegardés';
+    $messageType = 'success';
+}
+
+if (isset($_POST['change_theme'])) {
+    $data['settings']['theme'] = $_POST['theme'];
+    saveData($data);
+    $message = 'Thème changé avec succès';
+    $messageType = 'success';
+}
+
+if (isset($_POST['save_general_settings'])) {
+    $data['settings']['currency'] = $_POST['currency'];
+    $data['settings']['whatsapp_message'] = $_POST['whatsapp_message'];
+    saveData($data);
+    $message = 'Paramètres généraux sauvegardés';
+    $messageType = 'success';
 }
 
 // ============================================================================
@@ -388,15 +528,12 @@ $totalOrders = count($data['orders']);
 $totalCustomers = count($data['customers']);
 $totalRevenue = array_sum(array_map(fn($o) => ($o['status'] === 'terminee') ? ($o['total'] ?? 0) : 0, $data['orders']));
 
-$pendingOrders = array_filter($data['orders'], fn($o) => $o['status'] === 'en_attente');
-$processingOrders = array_filter($data['orders'], fn($o) => $o['status'] === 'en_cours');
-$completedOrders = array_filter($data['orders'], fn($o) => $o['status'] === 'terminee');
-$cancelledOrders = array_filter($data['orders'], fn($o) => $o['status'] === 'annulee');
+$pendingOrders = array_filter($data['orders'], fn($o) => ($o['status'] ?? '') === 'en_attente');
+$processingOrders = array_filter($data['orders'], fn($o) => ($o['status'] ?? '') === 'en_cours');
+$completedOrders = array_filter($data['orders'], fn($o) => ($o['status'] ?? '') === 'terminee');
+$cancelledOrders = array_filter($data['orders'], fn($o) => ($o['status'] ?? '') === 'annulee');
 
-$deliveredOrders = array_filter($data['orders'], fn($o) => $o['delivery_status'] === 'livre');
-$notDeliveredOrders = array_filter($data['orders'], fn($o) => $o['delivery_status'] === 'non_livre');
-
-$lowStockProducts = array_filter($data['products'], fn($p) => $p['stock'] <= 5);
+$lowStockProducts = array_filter($data['products'], fn($p) => ($p['stock'] ?? 10) <= 5);
 $recentOrders = array_slice(array_reverse($data['orders']), 0, 10);
 
 // ============================================================================
@@ -409,22 +546,22 @@ function formatPrice($price) {
 }
 
 function getStatusBadge($status) {
-    return match($status) {
+    $badges = [
         'en_attente' => '<span class="badge badge-warning">En attente</span>',
         'en_cours' => '<span class="badge badge-info">En cours</span>',
         'terminee' => '<span class="badge badge-success">Terminée</span>',
-        'annulee' => '<span class="badge badge-danger">Annulée</span>',
-        default => '<span class="badge badge-default">' . $status . '</span>'
-    };
+        'annulee' => '<span class="badge badge-danger">Annulée</span>'
+    ];
+    return $badges[$status] ?? '<span class="badge badge-default">' . htmlspecialchars($status) . '</span>';
 }
 
 function getDeliveryBadge($status) {
-    return match($status) {
+    $badges = [
         'livre' => '<span class="badge badge-success">Livré</span>',
         'non_livre' => '<span class="badge badge-warning">Non livré</span>',
-        'en_cours' => '<span class="badge badge-info">En cours</span>',
-        default => '<span class="badge badge-default">' . $status . '</span>'
-    };
+        'en_cours' => '<span class="badge badge-info">En cours</span>'
+    ];
+    return $badges[$status] ?? '<span class="badge badge-default">' . htmlspecialchars($status) . '</span>';
 }
 
 function getGalleryImages() {
@@ -434,7 +571,6 @@ function getGalleryImages() {
         foreach ($files as $file) {
             $images[] = [
                 'name' => basename($file),
-                'path' => GALLERY_DIR . basename($file),
                 'url' => GALLERY_DIR . basename($file)
             ];
         }
@@ -442,10 +578,26 @@ function getGalleryImages() {
     return $images;
 }
 
+function getProductImages() {
+    $images = [];
+    if (is_dir(PRODUCTS_DIR)) {
+        $files = glob(PRODUCTS_DIR . '*.{jpg,jpeg,png,gif,webp}', GLOB_BRACE);
+        foreach ($files as $file) {
+            $images[] = [
+                'name' => basename($file),
+                'url' => PRODUCTS_DIR . basename($file)
+            ];
+        }
+    }
+    return $images;
+}
+
 $galleryImages = getGalleryImages();
+$productImages = getProductImages();
+$allImages = array_merge($galleryImages, $productImages);
 $currentTheme = $data['settings']['theme'] ?? 'theme-1-rose';
 
-// Récupérer le produit à éditer si demandé
+// Récupérer le produit à éditer
 $editingProduct = null;
 if (isset($_GET['edit']) && $page === 'products') {
     $editId = intval($_GET['edit']);
@@ -464,29 +616,16 @@ if (isset($_GET['edit']) && $page === 'products') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - <?php echo htmlspecialchars($data['site']['name'] ?? 'Ma Boutique'); ?></title>
     
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Theme CSS -->
     <link rel="stylesheet" href="css/<?php echo htmlspecialchars($currentTheme); ?>.css">
     
     <style>
-        /* ============================================================================
-           VARIABLES ET BASE
-           ============================================================================ */
         :root {
             --sidebar-width: 260px;
-            --sidebar-collapsed: 70px;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Inter', sans-serif;
@@ -495,9 +634,7 @@ if (isset($_GET['edit']) && $page === 'products') {
             color: var(--dark);
         }
         
-        /* ============================================================================
-           LOGIN PAGE
-           ============================================================================ */
+        /* Login Page */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -522,26 +659,86 @@ if (isset($_GET['edit']) && $page === 'products') {
         }
         
         .login-logo img {
-            height: 90px;
+            height: 80px;
             margin-bottom: 1rem;
-        }
-        
-        .login-logo i {
-            font-size: 3.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
         
         .login-logo h1 {
             font-size: 1.5rem;
-            margin-top: 0.5rem;
             color: var(--dark);
         }
         
         .login-logo p {
             color: var(--gray);
             font-size: 0.875rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+        
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
         }
         
         .error-message {
@@ -556,25 +753,21 @@ if (isset($_GET['edit']) && $page === 'products') {
             gap: 0.5rem;
         }
         
-        /* ============================================================================
-           ADMIN LAYOUT
-           ============================================================================ */
+        /* Admin Layout */
         .admin-container {
             display: flex;
             min-height: 100vh;
         }
         
-        /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
             background: white;
             border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
             position: fixed;
             height: 100vh;
             z-index: 100;
-            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
         }
         
         .sidebar-header {
@@ -588,18 +781,9 @@ if (isset($_GET['edit']) && $page === 'products') {
             gap: 0.75rem;
         }
         
-        .sidebar-logo-icon {
-            width: 55px;
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .sidebar-logo-icon img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+        .sidebar-logo img {
+            height: 50px;
+            width: auto;
         }
         
         .sidebar-logo-text h3 {
@@ -650,11 +834,6 @@ if (isset($_GET['edit']) && $page === 'products') {
             color: var(--primary);
         }
         
-        .nav-item i {
-            width: 18px;
-            text-align: center;
-        }
-        
         .sidebar-footer {
             padding: 1rem;
             border-top: 1px solid var(--border);
@@ -680,23 +859,6 @@ if (isset($_GET['edit']) && $page === 'products') {
             color: var(--dark);
         }
         
-        /* Mobile menu toggle */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 101;
-            width: 40px;
-            height: 40px;
-            background: white;
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            cursor: pointer;
-        }
-        
-        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
@@ -716,11 +878,6 @@ if (isset($_GET['edit']) && $page === 'products') {
         .page-header h1 {
             font-size: 1.5rem;
             font-weight: 600;
-        }
-        
-        .page-header p {
-            color: var(--gray);
-            font-size: 0.875rem;
         }
         
         .user-menu {
@@ -759,40 +916,30 @@ if (isset($_GET['edit']) && $page === 'products') {
             border-color: var(--error);
         }
         
-        /* ============================================================================
-           COMPONENTS
-           ============================================================================ */
-        
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
         
         .stat-card {
             background: white;
-            padding: 1.25rem;
+            padding: 1.5rem;
             border-radius: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         
-        .stat-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-        
         .stat-card-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
         }
         
         .stat-card-icon.pink { background: rgba(236, 72, 153, 0.1); color: var(--primary); }
@@ -803,14 +950,14 @@ if (isset($_GET['edit']) && $page === 'products') {
         .stat-card-icon.red { background: rgba(239, 68, 68, 0.1); color: var(--error); }
         
         .stat-card-value {
-            font-size: 1.4rem;
+            font-size: 1.75rem;
             font-weight: 700;
             color: var(--dark);
-            margin-bottom: 0.15rem;
+            margin-bottom: 0.25rem;
         }
         
         .stat-card-label {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: var(--gray);
         }
         
@@ -833,7 +980,7 @@ if (isset($_GET['edit']) && $page === 'products') {
         }
         
         .card-header h2 {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
         }
         
@@ -852,16 +999,16 @@ if (isset($_GET['edit']) && $page === 'products') {
         }
         
         th, td {
-            padding: 0.875rem;
+            padding: 1rem;
             text-align: left;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
         
         th {
             font-weight: 600;
             color: var(--gray);
             text-transform: uppercase;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             letter-spacing: 0.05em;
             border-bottom: 1px solid var(--border);
         }
@@ -874,7 +1021,6 @@ if (isset($_GET['edit']) && $page === 'products') {
             background: var(--light);
         }
         
-        /* Product Cell */
         .product-cell {
             display: flex;
             align-items: center;
@@ -882,78 +1028,48 @@ if (isset($_GET['edit']) && $page === 'products') {
         }
         
         .product-thumb {
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
             border-radius: 8px;
             object-fit: cover;
         }
         
-        .product-info h4 {
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 0.15rem;
-        }
-        
-        .product-info p {
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
             font-size: 0.75rem;
-            color: var(--gray);
-        }
-        
-        /* Buttons */
-        .btn {
-            padding: 0.75rem 1.25rem;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.85rem;
             font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
         }
         
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
+        .badge-default { background: var(--light); color: var(--gray); }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
         
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-        
-        .btn-secondary {
-            background: var(--light);
-            color: var(--dark);
-            border: 1px solid var(--border);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--border);
-        }
-        
-        .btn-action {
-            width: 36px;
-            height: 36px;
-            padding: 0;
+        /* Alerts */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            background: var(--light);
-            color: var(--gray);
-            border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.2s;
+            gap: 0.75rem;
+            font-size: 0.9rem;
         }
         
-        .btn-action:hover {
-            background: var(--primary);
-            color: white;
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
         }
         
-        .btn-action.delete:hover {
-            background: var(--error);
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
         
         /* Forms */
@@ -964,29 +1080,18 @@ if (isset($_GET['edit']) && $page === 'products') {
             margin-bottom: 1rem;
         }
         
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
         .form-group.full-width {
             grid-column: span 2;
-        }
-        
-        .form-group label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
         }
         
         .form-group input,
         .form-group select,
         .form-group textarea {
+            width: 100%;
             padding: 0.75rem;
             border: 1px solid var(--border);
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-family: inherit;
             transition: all 0.2s;
         }
@@ -1006,7 +1111,164 @@ if (isset($_GET['edit']) && $page === 'products') {
             margin-top: 1.5rem;
         }
         
-        /* Modals */
+        /* Image Upload */
+        .image-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: var(--light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .image-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(236, 72, 153, 0.05);
+        }
+        
+        .image-upload-area i {
+            font-size: 2rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        .image-preview {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .gallery-item:hover {
+            border-color: var(--primary);
+        }
+        
+        .gallery-item.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Theme Grid */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        
+        .theme-card {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .theme-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .theme-card.active {
+            border-color: var(--primary);
+            background: rgba(236, 72, 153, 0.05);
+        }
+        
+        .theme-preview {
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+        
+        .theme-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .theme-desc {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+        
+        /* Reset Stats Section */
+        .reset-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .reset-option {
+            background: var(--light);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reset-option:hover {
+            border-color: var(--primary);
+        }
+        
+        .reset-option.selected {
+            border-color: var(--primary);
+            background: rgba(236, 72, 153, 0.05);
+        }
+        
+        .reset-option h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .reset-option p {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .danger-zone {
+            border: 2px solid var(--error);
+            background: #fef2f2;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .danger-zone h3 {
+            color: var(--error);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -1036,7 +1298,7 @@ if (isset($_GET['edit']) && $page === 'products') {
         }
         
         .modal-header {
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -1058,6 +1320,7 @@ if (isset($_GET['edit']) && $page === 'products') {
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1rem;
             transition: all 0.2s;
         }
         
@@ -1069,241 +1332,11 @@ if (isset($_GET['edit']) && $page === 'products') {
             padding: 1.25rem;
         }
         
-        /* Alerts */
-        .alert {
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.875rem;
-        }
-        
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-        
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-        
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-        
-        .badge-default { background: var(--light); color: var(--gray); }
-        .badge-success { background: #d1fae5; color: #065f46; }
-        .badge-warning { background: #fef3c7; color: #92400e; }
-        .badge-info { background: #dbeafe; color: #1e40af; }
-        .badge-danger { background: #fee2e2; color: #991b1b; }
-        
-        /* Status Cards */
-        .status-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .status-card {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        
-        .status-card .value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-        
-        .status-card .label {
-            font-size: 0.7rem;
-            color: var(--gray);
-            text-transform: uppercase;
-        }
-        
-        .status-card.pending .value { color: var(--warning); }
-        .status-card.processing .value { color: var(--info); }
-        .status-card.completed .value { color: var(--success); }
-        .status-card.cancelled .value { color: var(--error); }
-        
-        /* Theme Selector */
-        .theme-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        
-        .theme-card {
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        
-        .theme-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        .theme-card.active {
-            border-color: var(--primary);
-            background: rgba(236, 72, 153, 0.05);
-        }
-        
-        .theme-preview {
-            width: 100%;
-            height: 80px;
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-        }
-        
-        .theme-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .theme-desc {
-            font-size: 0.75rem;
-            color: var(--gray);
-        }
-        
-        /* Gallery */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 0.75rem;
-        }
-        
-        .gallery-item {
-            position: relative;
-            aspect-ratio: 1;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        
-        .gallery-item:hover {
-            border-color: var(--primary);
-        }
-        
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .gallery-item .delete-btn {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            width: 24px;
-            height: 24px;
-            background: rgba(239, 68, 68, 0.9);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        
-        .gallery-item:hover .delete-btn {
-            opacity: 1;
-        }
-        
-        .upload-area {
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .upload-area:hover {
-            border-color: var(--primary);
-            background: rgba(236, 72, 153, 0.02);
-        }
-        
-        .upload-area i {
-            font-size: 2rem;
-            color: var(--gray);
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Image Input Group */
-        .image-input-group {
-            display: flex;
-            gap: 0.5rem;
-            align-items: flex-start;
-        }
-        
-        .image-input-group input {
-            flex: 1;
-        }
-        
-        .btn-select-image {
-            padding: 0.875rem;
-            background: var(--light);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        
-        .btn-select-image:hover {
-            border-color: var(--primary);
-            background: rgba(236, 72, 153, 0.05);
-        }
-        
-        .image-preview-small {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 1px solid var(--border);
-        }
-        
-        .actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .stock-low {
-            color: var(--error);
-            font-weight: 600;
-        }
-        
-        /* ============================================================================
-           RESPONSIVE
-           ============================================================================ */
-        @media (max-width: 1024px) {
+        /* Responsive */
+        @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
+                transition: transform 0.3s;
             }
             
             .sidebar.open {
@@ -1312,10 +1345,6 @@ if (isset($_GET['edit']) && $page === 'products') {
             
             .main-content {
                 margin-left: 0;
-            }
-            
-            .mobile-menu-toggle {
-                display: block;
             }
             
             .form-grid {
@@ -1327,117 +1356,115 @@ if (isset($_GET['edit']) && $page === 'products') {
             }
         }
         
-        @media (max-width: 640px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .theme-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        /* Action buttons */
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light);
+            color: var(--gray);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-action:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-action.delete:hover {
+            background: var(--error);
         }
     </style>
 </head>
 <body>
     <?php if ($showLogin): ?>
-    <!-- ============================================================================
-         LOGIN PAGE
-         ============================================================================ -->
+    <!-- Page de connexion -->
     <div class="login-container">
         <div class="login-box">
             <div class="login-logo">
-                <?php if (!empty($data['site']['logo'])): ?>
-                <img src="<?php echo htmlspecialchars($data['site']['logo']); ?>" alt="Logo">
+                <?php if (file_exists($data['site']['logo'] ?? 'logo.png')): ?>
+                    <img src="<?php echo htmlspecialchars($data['site']['logo'] ?? 'logo.png'); ?>" alt="Logo">
                 <?php else: ?>
-                <i class="fas fa-store"></i>
+                    <i class="fas fa-store" style="font-size: 3rem; color: var(--primary);"></i>
                 <?php endif; ?>
                 <h1><?php echo htmlspecialchars($data['site']['name'] ?? 'Ma Boutique'); ?></h1>
-                <p>Panneau d'administration</p>
+                <p>Administration</p>
             </div>
             
             <?php if ($error): ?>
-            <div class="error-message">
-                <i class="fas fa-exclamation-circle"></i>
-                <?php echo $error; ?>
-            </div>
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?php echo htmlspecialchars($error); ?>
+                </div>
             <?php endif; ?>
             
-            <form method="POST">
-                <input type="hidden" name="login" value="1">
+            <form method="post">
                 <div class="form-group">
                     <label>Nom d'utilisateur</label>
-                    <input type="text" name="username" placeholder="admin" required>
+                    <input type="text" name="username" required autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
-                    <input type="password" name="password" placeholder="••••••" required>
+                    <input type="password" name="password" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <button type="submit" name="login" class="btn btn-primary">
                     <i class="fas fa-sign-in-alt"></i>
                     Se connecter
                 </button>
             </form>
             
-            <p style="text-align: center; margin-top: 1.5rem; font-size: 0.75rem; color: var(--gray);">
+            <p style="margin-top: 1.5rem; text-align: center; font-size: 0.8rem; color: var(--gray);">
                 Identifiants par défaut : admin / admin123
             </p>
         </div>
     </div>
     
     <?php else: ?>
-    <!-- ============================================================================
-         ADMIN DASHBOARD
-         ============================================================================ -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-    
+    <!-- Interface d'administration -->
     <div class="admin-container">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
+        <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <div class="sidebar-logo-icon">
-                        <?php if (!empty($data['site']['logo'])): ?>
-                        <img src="<?php echo htmlspecialchars($data['site']['logo']); ?>" alt="Logo">
-                        <?php else: ?>
-                        <i class="fas fa-store" style="font-size: 1.5rem; color: var(--primary);"></i>
-                        <?php endif; ?>
-                    </div>
+                    <?php if (file_exists($data['site']['logo'] ?? 'logo.png')): ?>
+                        <img src="<?php echo htmlspecialchars($data['site']['logo'] ?? 'logo.png'); ?>" alt="Logo">
+                    <?php endif; ?>
                     <div class="sidebar-logo-text">
                         <h3><?php echo htmlspecialchars($data['site']['name'] ?? 'Ma Boutique'); ?></h3>
-                        <p>Admin</p>
+                        <p>Administration</p>
                     </div>
                 </div>
             </div>
             
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <div class="nav-section-title">Menu principal</div>
+                    <div class="nav-section-title">Général</div>
                     <a href="?page=dashboard" class="nav-item <?php echo $page === 'dashboard' ? 'active' : ''; ?>">
-                        <i class="fas fa-chart-line"></i>
+                        <i class="fas fa-home"></i>
                         Tableau de bord
                     </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Gestion</div>
                     <a href="?page=products" class="nav-item <?php echo $page === 'products' ? 'active' : ''; ?>">
                         <i class="fas fa-box"></i>
                         Produits
                     </a>
-                    <a href="?page=orders" class="nav-item <?php echo $page === 'orders' ? 'active' : ''; ?>">
-                        <i class="fas fa-shopping-cart"></i>
-                        Commandes
-                    </a>
-                    <a href="?page=customers" class="nav-item <?php echo $page === 'customers' ? 'active' : ''; ?>">
-                        <i class="fas fa-users"></i>
-                        Clients
-                    </a>
                     <a href="?page=categories" class="nav-item <?php echo $page === 'categories' ? 'active' : ''; ?>">
                         <i class="fas fa-tags"></i>
                         Catégories
+                    </a>
+                    <a href="?page=orders" class="nav-item <?php echo $page === 'orders' ? 'active' : ''; ?>">
+                        <i class="fas fa-shopping-bag"></i>
+                        Commandes
                     </a>
                     <a href="?page=gallery" class="nav-item <?php echo $page === 'gallery' ? 'active' : ''; ?>">
                         <i class="fas fa-images"></i>
@@ -1447,17 +1474,13 @@ if (isset($_GET['edit']) && $page === 'products') {
                 
                 <div class="nav-section">
                     <div class="nav-section-title">Configuration</div>
-                    <a href="?page=site" class="nav-item <?php echo $page === 'site' ? 'active' : ''; ?>">
-                        <i class="fas fa-store"></i>
-                        Informations du site
+                    <a href="?page=settings" class="nav-item <?php echo $page === 'settings' ? 'active' : ''; ?>">
+                        <i class="fas fa-cog"></i>
+                        Paramètres
                     </a>
                     <a href="?page=themes" class="nav-item <?php echo $page === 'themes' ? 'active' : ''; ?>">
                         <i class="fas fa-palette"></i>
                         Thèmes
-                    </a>
-                    <a href="?page=settings" class="nav-item <?php echo $page === 'settings' ? 'active' : ''; ?>">
-                        <i class="fas fa-cog"></i>
-                        Paramètres
                     </a>
                     <a href="?page=security" class="nav-item <?php echo $page === 'security' ? 'active' : ''; ?>">
                         <i class="fas fa-shield-alt"></i>
@@ -1468,37 +1491,33 @@ if (isset($_GET['edit']) && $page === 'products') {
             
             <div class="sidebar-footer">
                 <a href="index.php" class="btn-back" target="_blank">
-                    <i class="fas fa-arrow-left"></i>
-                    Retour à la boutique
+                    <i class="fas fa-external-link-alt"></i>
+                    Voir le site
                 </a>
             </div>
         </aside>
         
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
             <div class="page-header">
-                <div>
-                    <h1><?php 
-                        echo match($page) {
-                            'dashboard' => 'Tableau de bord',
-                            'products' => 'Produits',
-                            'orders' => 'Commandes',
-                            'customers' => 'Clients',
-                            'categories' => 'Catégories',
-                            'gallery' => 'Galerie d\'images',
-                            'site' => 'Informations du site',
-                            'themes' => 'Thèmes',
-                            'settings' => 'Paramètres',
-                            'security' => 'Sécurité',
-                            default => 'Tableau de bord'
-                        };
-                    ?></h1>
-                    <p>Gestion de la boutique <?php echo htmlspecialchars($data['site']['name'] ?? 'Ma Boutique'); ?></p>
-                </div>
+                <h1>
+                    <?php
+                    $pageTitles = [
+                        'dashboard' => 'Tableau de bord',
+                        'products' => 'Gestion des produits',
+                        'categories' => 'Gestion des catégories',
+                        'orders' => 'Gestion des commandes',
+                        'gallery' => 'Galerie d\'images',
+                        'settings' => 'Paramètres du site',
+                        'themes' => 'Choix du thème',
+                        'security' => 'Sécurité & Mot de passe'
+                    ];
+                    echo $pageTitles[$page] ?? 'Administration';
+                    ?>
+                </h1>
                 <div class="user-menu">
                     <div class="user-avatar">A</div>
-                    <a href="?logout=1" class="btn-logout">
+                    <a href="?logout" class="btn-logout">
                         <i class="fas fa-sign-out-alt"></i>
                         Déconnexion
                     </a>
@@ -1506,175 +1525,217 @@ if (isset($_GET['edit']) && $page === 'products') {
             </div>
             
             <?php if ($message): ?>
-            <div class="alert alert-<?php echo $messageType; ?>">
-                <i class="fas fa-<?php echo $messageType === 'success' ? 'check-circle' : 'exclamation-circle'; ?>"></i>
-                <?php echo $message; ?>
-            </div>
+                <div class="alert alert-<?php echo $messageType; ?>">
+                    <i class="fas fa-<?php echo $messageType === 'success' ? 'check-circle' : 'exclamation-circle'; ?>"></i>
+                    <?php echo htmlspecialchars($message); ?>
+                </div>
             <?php endif; ?>
             
+            <!-- DASHBOARD -->
             <?php if ($page === 'dashboard'): ?>
-            <!-- ============================================================================
-                 DASHBOARD
-                 ============================================================================ -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-card-header">
+                <div class="stats-grid">
+                    <div class="stat-card">
                         <div class="stat-card-icon pink">
-                            <i class="fas fa-dollar-sign"></i>
+                            <i class="fas fa-box"></i>
                         </div>
+                        <div class="stat-card-value"><?php echo $totalProducts; ?></div>
+                        <div class="stat-card-label">Produits</div>
                     </div>
-                    <div class="stat-card-value"><?php echo formatPrice($totalRevenue); ?></div>
-                    <div class="stat-card-label">Revenus confirmés</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-card-header">
+                    <div class="stat-card">
                         <div class="stat-card-icon purple">
                             <i class="fas fa-shopping-bag"></i>
                         </div>
+                        <div class="stat-card-value"><?php echo $totalOrders; ?></div>
+                        <div class="stat-card-label">Commandes</div>
                     </div>
-                    <div class="stat-card-value"><?php echo $totalOrders; ?></div>
-                    <div class="stat-card-label">Commandes totales</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-card-header">
+                    <div class="stat-card">
                         <div class="stat-card-icon green">
                             <i class="fas fa-users"></i>
                         </div>
+                        <div class="stat-card-value"><?php echo $totalCustomers; ?></div>
+                        <div class="stat-card-label">Clients</div>
                     </div>
-                    <div class="stat-card-value"><?php echo $totalCustomers; ?></div>
-                    <div class="stat-card-label">Clients</div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon orange">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-card-value"><?php echo formatPrice($totalRevenue); ?></div>
+                        <div class="stat-card-label">Revenus</div>
+                    </div>
                 </div>
                 
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-card-icon orange">
-                            <i class="fas fa-box"></i>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-icon blue">
+                            <i class="fas fa-clock"></i>
                         </div>
+                        <div class="stat-card-value"><?php echo count($pendingOrders); ?></div>
+                        <div class="stat-card-label">En attente</div>
                     </div>
-                    <div class="stat-card-value"><?php echo $totalProducts; ?></div>
-                    <div class="stat-card-label">Produits</div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon red">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-card-value"><?php echo count($lowStockProducts); ?></div>
+                        <div class="stat-card-label">Stock faible</div>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Order Status -->
-            <h3 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--gray);">Statut des commandes</h3>
-            <div class="status-cards">
-                <div class="status-card pending">
-                    <div class="value"><?php echo count($pendingOrders); ?></div>
-                    <div class="label">En attente</div>
-                </div>
-                <div class="status-card processing">
-                    <div class="value"><?php echo count($processingOrders); ?></div>
-                    <div class="label">En cours</div>
-                </div>
-                <div class="status-card completed">
-                    <div class="value"><?php echo count($completedOrders); ?></div>
-                    <div class="label">Terminées</div>
-                </div>
-                <div class="status-card cancelled">
-                    <div class="value"><?php echo count($cancelledOrders); ?></div>
-                    <div class="label">Annulées</div>
-                </div>
-            </div>
-            
-            <!-- Recent Orders -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Commandes récentes</h2>
-                    <a href="?page=orders" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.4rem 0.875rem;">Voir tout</a>
-                </div>
-                <div class="card-body">
-                    <?php if (empty($recentOrders)): ?>
-                    <p style="text-align: center; color: var(--gray); padding: 2rem;">Aucune commande pour le moment</p>
-                    <?php else: ?>
+                
+                <?php if (count($recentOrders) > 0): ?>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Commandes récentes</h2>
+                    </div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>N°</th>
+                                    <th>ID</th>
                                     <th>Client</th>
                                     <th>Total</th>
                                     <th>Statut</th>
-                                    <th>Livraison</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($recentOrders as $order): ?>
                                 <tr>
-                                    <td><?php echo substr($order['id'], -6); ?></td>
-                                    <td><?php echo htmlspecialchars($order['customer_name']); ?></td>
-                                    <td><?php echo formatPrice($order['total']); ?></td>
-                                    <td><?php echo getStatusBadge($order['status']); ?></td>
-                                    <td><?php echo getDeliveryBadge($order['delivery_status']); ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-            
-            <?php if (!empty($lowStockProducts)): ?>
-            <div class="card">
-                <div class="card-header">
-                    <h2>⚠️ Produits en rupture de stock</h2>
-                </div>
-                <div class="card-body">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Produit</th>
-                                    <th>Stock</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($lowStockProducts as $product): ?>
-                                <tr>
-                                    <td>
-                                        <div class="product-cell">
-                                            <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="" class="product-thumb">
-                                            <div class="product-info">
-                                                <h4><?php echo htmlspecialchars($product['name']); ?></h4>
-                                                <p><?php echo htmlspecialchars($product['brand']); ?></p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="stock-low"><?php echo $product['stock']; ?> unités</td>
-                                    <td>
-                                        <a href="?page=products&edit=<?php echo $product['id']; ?>" class="btn-action">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                    </td>
+                                    <td><?php echo htmlspecialchars($order['id'] ?? ''); ?></td>
+                                    <td><?php echo htmlspecialchars($order['customer_name'] ?? ''); ?></td>
+                                    <td><?php echo formatPrice($order['total'] ?? 0); ?></td>
+                                    <td><?php echo getStatusBadge($order['status'] ?? ''); ?></td>
+                                    <td><?php echo htmlspecialchars($order['created_at'] ?? ''); ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-            <?php endif; ?>
-            
+                <?php endif; ?>
+                
             <?php elseif ($page === 'products'): ?>
-            <!-- ============================================================================
-                 PRODUCTS PAGE
-                 ============================================================================ -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <h2>Produits</h2>
-                        <p style="color: var(--gray); font-size: 0.8rem;">Gérez votre catalogue de produits</p>
+                <!-- GESTION DES PRODUITS -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><?php echo $editingProduct ? 'Modifier le produit' : 'Ajouter un produit'; ?></h2>
                     </div>
-                    <button class="btn btn-primary" onclick="openModal('addProductModal')">
-                        <i class="fas fa-plus"></i>
-                        Ajouter
-                    </button>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                            <?php if ($editingProduct): ?>
+                                <input type="hidden" name="product_id" value="<?php echo $editingProduct['id']; ?>">
+                            <?php endif; ?>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nom du produit *</label>
+                                    <input type="text" name="product_name" required value="<?php echo htmlspecialchars($editingProduct['name'] ?? ''); ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Marque</label>
+                                    <input type="text" name="product_brand" value="<?php echo htmlspecialchars($editingProduct['brand'] ?? ''); ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Catégorie *</label>
+                                    <select name="product_category" required>
+                                        <?php foreach ($data['categories'] as $cat): ?>
+                                            <?php if ($cat['id'] !== 'tous'): ?>
+                                            <option value="<?php echo htmlspecialchars($cat['id']); ?>" <?php echo ($editingProduct['category'] ?? '') === $cat['id'] ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($cat['name']); ?>
+                                            </option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Genre</label>
+                                    <select name="product_gender">
+                                        <?php foreach ($data['genders'] ?? ['Tous', 'Femme', 'Homme', 'Mixte'] as $gender): ?>
+                                            <option value="<?php echo htmlspecialchars($gender); ?>" <?php echo ($editingProduct['gender'] ?? '') === $gender ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($gender); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Prix (FCFA) *</label>
+                                    <input type="number" name="product_price" required value="<?php echo $editingProduct['price'] ?? ''; ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Ancien prix (FCFA)</label>
+                                    <input type="number" name="product_old_price" value="<?php echo $editingProduct['old_price'] ?? ''; ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Stock</label>
+                                    <input type="number" name="product_stock" value="<?php echo $editingProduct['stock'] ?? 0; ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Badge</label>
+                                    <select name="product_badge">
+                                        <option value="">Aucun</option>
+                                        <option value="nouveau" <?php echo ($editingProduct['badge'] ?? '') === 'nouveau' ? 'selected' : ''; ?>>Nouveau</option>
+                                        <option value="promo" <?php echo ($editingProduct['badge'] ?? '') === 'promo' ? 'selected' : ''; ?>>Promo</option>
+                                        <option value="populaire" <?php echo ($editingProduct['badge'] ?? '') === 'populaire' ? 'selected' : ''; ?>>Populaire</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>Image principale</label>
+                                <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
+                                    <div style="flex: 1; min-width: 250px;">
+                                        <input type="text" name="product_image" id="product_image" placeholder="URL de l'image" value="<?php echo htmlspecialchars($editingProduct['image'] ?? ''); ?>" style="margin-bottom: 0.5rem;">
+                                        <p style="font-size: 0.8rem; color: var(--gray);">Ou uploadez une image :</p>
+                                        <input type="file" name="product_main_image" accept="image/*" id="main_image_input">
+                                    </div>
+                                    <div id="main_image_preview">
+                                        <?php if ($editingProduct && $editingProduct['image']): ?>
+                                            <img src="<?php echo htmlspecialchars($editingProduct['image']); ?>" class="image-preview">
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <?php if (count($allImages) > 0): ?>
+                            <div class="form-group full-width">
+                                <label>Ou sélectionnez dans la galerie</label>
+                                <div class="gallery-grid" style="max-height: 150px; overflow-y: auto;">
+                                    <?php foreach ($allImages as $img): ?>
+                                        <div class="gallery-item" onclick="selectImage('<?php echo htmlspecialchars($img['url']); ?>', 'product_image', this)">
+                                            <img src="<?php echo htmlspecialchars($img['url']); ?>" alt="">
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <div class="form-group full-width">
+                                <label>Description</label>
+                                <textarea name="product_description" rows="3"><?php echo htmlspecialchars($editingProduct['description'] ?? ''); ?></textarea>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <?php if ($editingProduct): ?>
+                                    <a href="?page=products" class="btn btn-secondary">Annuler</a>
+                                    <button type="submit" name="edit_product" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Modifier
+                                    </button>
+                                <?php else: ?>
+                                    <button type="submit" name="add_product" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i>
+                                        Ajouter
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-body">
+                
+                <!-- Liste des produits -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Liste des produits (<?php echo $totalProducts; ?>)</h2>
+                    </div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -1683,200 +1744,37 @@ if (isset($_GET['edit']) && $page === 'products') {
                                     <th>Catégorie</th>
                                     <th>Prix</th>
                                     <th>Stock</th>
-                                    <th>Images</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($data['products'] as $product): 
-                                    $imageCount = 1 + (isset($product['images']) ? count($product['images']) : 0);
-                                ?>
+                                <?php foreach ($data['products'] as $product): ?>
                                 <tr>
                                     <td>
                                         <div class="product-cell">
-                                            <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="" class="product-thumb">
-                                            <div class="product-info">
-                                                <h4><?php echo htmlspecialchars($product['name']); ?></h4>
-                                                <p><?php echo htmlspecialchars($product['brand']); ?></p>
+                                            <img src="<?php echo htmlspecialchars($product['image'] ?? 'https://via.placeholder.com/50'); ?>" class="product-thumb" alt="">
+                                            <div>
+                                                <strong><?php echo htmlspecialchars($product['name']); ?></strong>
+                                                <?php if ($product['brand'] ?? ''): ?>
+                                                    <br><small><?php echo htmlspecialchars($product['brand']); ?></small>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </td>
-                                    <td><?php echo ucfirst($product['category']); ?></td>
+                                    <td><?php echo htmlspecialchars($product['category'] ?? ''); ?></td>
+                                    <td><?php echo formatPrice($product['price']); ?></td>
                                     <td>
-                                        <?php echo formatPrice($product['price']); ?>
-                                        <?php if ($product['old_price']): ?>
-                                        <br><small style="text-decoration: line-through; color: var(--gray);"><?php echo formatPrice($product['old_price']); ?></small>
+                                        <?php if (($product['stock'] ?? 10) <= 5): ?>
+                                            <span class="badge badge-danger"><?php echo $product['stock'] ?? 0; ?></span>
+                                        <?php else: ?>
+                                            <?php echo $product['stock'] ?? 0; ?>
                                         <?php endif; ?>
                                     </td>
-                                    <td <?php echo $product['stock'] <= 5 ? 'class="stock-low"' : ''; ?>>
-                                        <?php echo $product['stock']; ?>
-                                    </td>
                                     <td>
-                                        <span class="badge badge-default">
-                                            <i class="fas fa-images"></i> <?php echo $imageCount; ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <a href="?page=products&edit=<?php echo $product['id']; ?>" class="btn-action" title="Modifier" onclick="openEditModal(<?php echo htmlspecialchars(json_encode($product)); ?>); return false;">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="?page=products&delete_product=<?php echo $product['id']; ?>" class="btn-action delete" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <?php if (empty($data['products'])): ?>
-                    <p style="text-align: center; color: var(--gray); padding: 3rem;">
-                        <i class="fas fa-box" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; display: block;"></i>
-                        Aucun produit. Cliquez sur "Ajouter" pour créer votre premier produit.
-                    </p>
-                    <?php endif; ?>
-                </div>
-            </div>
-            
-            <?php elseif ($page === 'orders'): ?>
-            <!-- ============================================================================
-                 ORDERS PAGE
-                 ============================================================================ -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <h2>Commandes</h2>
-                        <p style="color: var(--gray); font-size: 0.8rem;">Gérez toutes les commandes</p>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <?php if (empty($data['orders'])): ?>
-                    <p style="text-align: center; color: var(--gray); padding: 3rem;">
-                        <i class="fas fa-shopping-cart" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; display: block;"></i>
-                        Aucune commande pour le moment.
-                    </p>
-                    <?php else: ?>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>N°</th>
-                                    <th>Client</th>
-                                    <th>Articles</th>
-                                    <th>Total</th>
-                                    <th>Statut</th>
-                                    <th>Livraison</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($data['orders'] as $order): ?>
-                                <tr>
-                                    <td><?php echo substr($order['id'], -6); ?></td>
-                                    <td><?php echo htmlspecialchars($order['customer_name']); ?></td>
-                                    <td><?php echo count($order['items']); ?></td>
-                                    <td><?php echo formatPrice($order['total']); ?></td>
-                                    <td><?php echo getStatusBadge($order['status']); ?></td>
-                                    <td><?php echo getDeliveryBadge($order['delivery_status']); ?></td>
-                                    <td><?php echo date('d/m/Y', strtotime($order['created_at'])); ?></td>
-                                    <td>
-                                        <button class="btn-action" onclick="openOrderModal(<?php echo htmlspecialchars(json_encode($order)); ?>)" title="Modifier">
+                                        <a href="?page=products&edit=<?php echo $product['id']; ?>" class="btn-action" title="Modifier">
                                             <i class="fas fa-edit"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-            
-            <?php elseif ($page === 'customers'): ?>
-            <!-- ============================================================================
-                 CUSTOMERS PAGE
-                 ============================================================================ -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <h2>Clients</h2>
-                        <p style="color: var(--gray); font-size: 0.8rem;">Liste de tous les clients</p>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <?php if (empty($data['customers'])): ?>
-                    <p style="text-align: center; color: var(--gray); padding: 3rem;">
-                        <i class="fas fa-users" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; display: block;"></i>
-                        Aucun client pour le moment.
-                    </p>
-                    <?php else: ?>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nom</th>
-                                    <th>Téléphone</th>
-                                    <th>Quartier</th>
-                                    <th>Commandes</th>
-                                    <th>Date d'inscription</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($data['customers'] as $customer): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($customer['firstname'] . ' ' . $customer['lastname']); ?></td>
-                                    <td><?php echo htmlspecialchars($customer['phone']); ?></td>
-                                    <td><?php echo htmlspecialchars($customer['quartier']); ?></td>
-                                    <td><?php echo $customer['order_count']; ?></td>
-                                    <td><?php echo date('d/m/Y', strtotime($customer['created_at'])); ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-            
-            <?php elseif ($page === 'categories'): ?>
-            <!-- ============================================================================
-                 CATEGORIES PAGE
-                 ============================================================================ -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <h2>Catégories</h2>
-                        <p style="color: var(--gray); font-size: 0.8rem;">Gérez les catégories de produits</p>
-                    </div>
-                    <button class="btn btn-primary" onclick="openModal('addCategoryModal')">
-                        <i class="fas fa-plus"></i>
-                        Ajouter
-                    </button>
-                </div>
-                <div class="card-body">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nom</th>
-                                    <th>Icône</th>
-                                    <th>Nombre de produits</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($data['categories'] as $category): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($category['name']); ?></td>
-                                    <td><?php echo $category['icon']; ?></td>
-                                    <td><?php echo $category['count']; ?></td>
-                                    <td>
-                                        <a href="?page=categories&delete_category=<?php echo htmlspecialchars($category['id']); ?>" class="btn-action delete" title="Supprimer" onclick="return confirm('Êtes-vous sûr ?')">
+                                        </a>
+                                        <a href="?page=products&delete_product=<?php echo $product['id']; ?>" class="btn-action delete" title="Supprimer" onclick="return confirm('Supprimer ce produit ?')">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
@@ -1886,617 +1784,503 @@ if (isset($_GET['edit']) && $page === 'products') {
                         </table>
                     </div>
                 </div>
-            </div>
-            
-            <?php elseif ($page === 'gallery'): ?>
-            <!-- ============================================================================
-                 GALLERY PAGE
-                 ============================================================================ -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <h2>Galerie d'images</h2>
-                        <p style="color: var(--gray); font-size: 0.8rem;">Gérez les images pour les produits</p>
+                
+            <?php elseif ($page === 'categories'): ?>
+                <!-- GESTION DES CATÉGORIES -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Ajouter une catégorie</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nom de la catégorie *</label>
+                                    <input type="text" name="category_name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Icône (emoji)</label>
+                                    <input type="text" name="category_icon" placeholder="📦" maxlength="10">
+                                </div>
+                            </div>
+                            <button type="submit" name="add_category" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Ajouter
+                            </button>
+                        </form>
                     </div>
                 </div>
-                <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data" style="margin-bottom: 2rem;">
-                        <label class="upload-area" onclick="document.getElementById('imageUpload').click()">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p style="margin: 0.5rem 0 0 0;">Cliquez pour uploader une image</p>
-                            <small style="color: var(--gray);">JPG, PNG, GIF, WebP (max 5MB)</small>
-                        </label>
-                        <input type="file" id="imageUpload" name="image_file" accept="image/*" style="display: none;" onchange="this.form.submit()">
-                    </form>
-                    
-                    <?php if (!empty($galleryImages)): ?>
-                    <div class="gallery-grid">
-                        <?php foreach ($galleryImages as $img): ?>
-                        <div class="gallery-item">
-                            <img src="<?php echo htmlspecialchars($img['url']); ?>" alt="<?php echo htmlspecialchars($img['name']); ?>">
-                            <a href="?page=gallery&delete_gallery_image=<?php echo htmlspecialchars($img['name']); ?>" class="delete-btn" title="Supprimer" onclick="return confirm('Êtes-vous sûr ?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </div>
-                        <?php endforeach; ?>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Liste des catégories</h2>
                     </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Icône</th>
+                                    <th>Nom</th>
+                                    <th>Produits</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($data['categories'] as $category): ?>
+                                <tr>
+                                    <td style="font-size: 1.5rem;"><?php echo htmlspecialchars($category['icon'] ?? '📦'); ?></td>
+                                    <td><?php echo htmlspecialchars($category['name']); ?></td>
+                                    <td><?php echo $category['count'] ?? 0; ?></td>
+                                    <td>
+                                        <?php if ($category['id'] !== 'tous'): ?>
+                                        <a href="?page=categories&delete_category=<?php echo htmlspecialchars($category['id']); ?>" class="btn-action delete" onclick="return confirm('Supprimer cette catégorie ?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            <?php elseif ($page === 'orders'): ?>
+                <!-- GESTION DES COMMANDES -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Liste des commandes</h2>
+                    </div>
+                    <?php if (count($data['orders']) === 0): ?>
+                        <div class="card-body">
+                            <p style="color: var(--gray); text-align: center; padding: 2rem;">
+                                Aucune commande pour le moment
+                            </p>
+                        </div>
                     <?php else: ?>
-                    <p style="text-align: center; color: var(--gray); padding: 2rem;">
-                        <i class="fas fa-images" style="font-size: 2rem; opacity: 0.3; margin-bottom: 1rem; display: block;"></i>
-                        La galerie est vide. Uploadez des images pour commencer.
-                    </p>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Client</th>
+                                        <th>Téléphone</th>
+                                        <th>Articles</th>
+                                        <th>Total</th>
+                                        <th>Statut</th>
+                                        <th>Livraison</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($data['orders'] as $order): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($order['id'] ?? ''); ?></td>
+                                        <td><?php echo htmlspecialchars($order['customer_name'] ?? ''); ?></td>
+                                        <td><?php echo htmlspecialchars($order['customer_phone'] ?? ''); ?></td>
+                                        <td><?php echo count($order['items'] ?? []); ?></td>
+                                        <td><?php echo formatPrice($order['total'] ?? 0); ?></td>
+                                        <td><?php echo getStatusBadge($order['status'] ?? ''); ?></td>
+                                        <td><?php echo getDeliveryBadge($order['delivery_status'] ?? ''); ?></td>
+                                        <td>
+                                            <button class="btn-action" onclick="editOrder('<?php echo htmlspecialchars(json_encode($order)); ?>')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     <?php endif; ?>
                 </div>
-            </div>
-            
-            <?php elseif ($page === 'site'): ?>
-            <!-- ============================================================================
-                 SITE INFO PAGE
-                 ============================================================================ -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Informations du site</h2>
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        <div class="form-grid">
-                            <div class="form-group full-width">
-                                <label>Nom du site *</label>
-                                <input type="text" name="site_name" value="<?php echo htmlspecialchars($data['site']['name'] ?? ''); ?>" required>
+                
+            <?php elseif ($page === 'gallery'): ?>
+                <!-- GALERIE D'IMAGES -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Uploader une image</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                            <div class="image-upload-area" onclick="document.getElementById('image_file').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Cliquez ou glissez une image ici</p>
+                                <p style="font-size: 0.8rem; color: var(--gray);">JPG, PNG, GIF, WebP - Max 5MB</p>
+                                <input type="file" name="image_file" id="image_file" accept="image/*" style="display: none;" required>
                             </div>
-                            <div class="form-group full-width">
-                                <label>Slogan</label>
-                                <input type="text" name="site_tagline" value="<?php echo htmlspecialchars($data['site']['tagline'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Description</label>
-                                <textarea name="site_description" rows="3"><?php echo htmlspecialchars($data['site']['description'] ?? ''); ?></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Téléphone</label>
-                                <input type="text" name="site_phone" value="<?php echo htmlspecialchars($data['site']['phone'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" name="site_email" value="<?php echo htmlspecialchars($data['site']['email'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Adresse</label>
-                                <input type="text" name="site_address" value="<?php echo htmlspecialchars($data['site']['address'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Logo (URL)</label>
-                                <input type="url" name="site_logo" value="<?php echo htmlspecialchars($data['site']['logo'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Nombre de produits</label>
-                                <input type="text" name="stat_products" value="<?php echo htmlspecialchars($data['site']['stats']['products'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Note (avis)</label>
-                                <input type="text" name="stat_rating" value="<?php echo htmlspecialchars($data['site']['stats']['rating'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Délai de livraison</label>
-                                <input type="text" name="stat_delivery" value="<?php echo htmlspecialchars($data['site']['stats']['delivery'] ?? ''); ?>">
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" name="save_site_settings" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                Sauvegarder
+                            <button type="submit" name="upload_image" class="btn btn-primary" style="margin-top: 1rem;">
+                                <i class="fas fa-upload"></i>
+                                Uploader
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            
-            <?php elseif ($page === 'themes'): ?>
-            <!-- ============================================================================
-                 THEMES PAGE
-                 ============================================================================ -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Sélectionner un thème</h2>
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        <div class="theme-grid">
-                            <?php foreach ($availableThemes as $themeId => $theme): ?>
-                            <label class="theme-card <?php echo ($currentTheme === $themeId) ? 'active' : ''; ?>">
-                                <input type="radio" name="theme" value="<?php echo $themeId; ?>" <?php echo ($currentTheme === $themeId) ? 'checked' : ''; ?> style="display: none;">
-                                <div class="theme-preview" style="background: <?php echo $theme['color']; ?>;"></div>
-                                <div class="theme-name"><?php echo $theme['icon']; ?> <?php echo $theme['name']; ?></div>
-                                <div class="theme-desc"><?php echo $theme['desc']; ?></div>
-                            </label>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Images disponibles (<?php echo count($allImages); ?>)</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="gallery-grid">
+                            <?php foreach ($allImages as $img): ?>
+                                <div class="gallery-item">
+                                    <img src="<?php echo htmlspecialchars($img['url']); ?>" alt="">
+                                    <a href="?page=gallery&delete_gallery_image=<?php echo htmlspecialchars($img['name']); ?>" 
+                                       class="btn-action delete" 
+                                       style="position: absolute; top: 4px; right: 4px;"
+                                       onclick="return confirm('Supprimer cette image ?')">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                </div>
                             <?php endforeach; ?>
                         </div>
-                        <div class="form-actions" style="margin-top: 2rem;">
-                            <button type="submit" name="change_theme" class="btn btn-primary">
-                                <i class="fas fa-check"></i>
-                                Appliquer le thème
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-            
+                
             <?php elseif ($page === 'settings'): ?>
-            <!-- ============================================================================
-                 SETTINGS PAGE
-                 ============================================================================ -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Paramètres généraux</h2>
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Devise</label>
-                                <input type="text" name="currency" value="<?php echo htmlspecialchars($data['settings']['currency'] ?? 'FCFA'); ?>">
+                <!-- PARAMÈTRES DU SITE -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Informations du site</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nom du site</label>
+                                    <input type="text" name="site_name" value="<?php echo htmlspecialchars($data['site']['name'] ?? ''); ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Slogan</label>
+                                    <input type="text" name="site_tagline" value="<?php echo htmlspecialchars($data['site']['tagline'] ?? ''); ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Téléphone WhatsApp</label>
+                                    <input type="text" name="site_phone" value="<?php echo htmlspecialchars($data['site']['phone'] ?? ''); ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" name="site_email" value="<?php echo htmlspecialchars($data['site']['email'] ?? ''); ?>">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Adresse</label>
+                                    <input type="text" name="site_address" value="<?php echo htmlspecialchars($data['site']['address'] ?? ''); ?>">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Description</label>
+                                    <textarea name="site_description" rows="3"><?php echo htmlspecialchars($data['site']['description'] ?? ''); ?></textarea>
+                                </div>
                             </div>
-                            <div class="form-group full-width">
-                                <label>Message WhatsApp par défaut</label>
-                                <textarea name="whatsapp_message" rows="3"><?php echo htmlspecialchars($data['settings']['whatsapp_message'] ?? ''); ?></textarea>
+                            
+                            <h3 style="margin: 1.5rem 0 1rem;">Statistiques affichées</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nombre de produits</label>
+                                    <input type="text" name="stat_products" value="<?php echo htmlspecialchars($data['site']['stats']['products'] ?? '100+'); ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Note</label>
+                                    <input type="text" name="stat_rating" value="<?php echo htmlspecialchars($data['site']['stats']['rating'] ?? '4.8'); ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Délai de livraison</label>
+                                    <input type="text" name="stat_delivery" value="<?php echo htmlspecialchars($data['site']['stats']['delivery'] ?? '24h'); ?>">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" name="save_general_settings" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                Sauvegarder
-                            </button>
-                        </div>
-                    </form>
+                            
+                            <div class="form-actions">
+                                <button type="submit" name="save_site_settings" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Sauvegarder
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Paramètres généraux</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Devise</label>
+                                    <select name="currency">
+                                        <option value="FCFA" <?php echo ($data['settings']['currency'] ?? '') === 'FCFA' ? 'selected' : ''; ?>>FCFA</option>
+                                        <option value="EUR" <?php echo ($data['settings']['currency'] ?? '') === 'EUR' ? 'selected' : ''; ?>>EUR</option>
+                                        <option value="USD" <?php echo ($data['settings']['currency'] ?? '') === 'USD' ? 'selected' : ''; ?>>USD</option>
+                                    </select>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Message WhatsApp par défaut</label>
+                                    <textarea name="whatsapp_message" rows="2"><?php echo htmlspecialchars($data['settings']['whatsapp_message'] ?? ''); ?></textarea>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" name="save_general_settings" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Sauvegarder
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+            <?php elseif ($page === 'themes'): ?>
+                <!-- CHOIX DU THÈME -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Choisir un thème</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            <div class="theme-grid">
+                                <?php foreach ($availableThemes as $themeId => $theme): ?>
+                                <label class="theme-card <?php echo $currentTheme === $themeId ? 'active' : ''; ?>">
+                                    <div class="theme-preview" style="background: linear-gradient(135deg, <?php echo $theme['color']; ?>, <?php echo $theme['color']; ?>88);"></div>
+                                    <div class="theme-name"><?php echo $theme['icon']; ?> <?php echo htmlspecialchars($theme['name']); ?></div>
+                                    <div class="theme-desc"><?php echo htmlspecialchars($theme['desc']); ?></div>
+                                    <input type="radio" name="theme" value="<?php echo $themeId; ?>" <?php echo $currentTheme === $themeId ? 'checked' : ''; ?> style="display: none;">
+                                </label>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" name="change_theme" class="btn btn-primary">
+                                    <i class="fas fa-palette"></i>
+                                    Appliquer le thème
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
             <?php elseif ($page === 'security'): ?>
-            <!-- ============================================================================
-                 SECURITY PAGE
-                 ============================================================================ -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Sécurité</h2>
+                <!-- SÉCURITÉ -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Changer le mot de passe</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label>Mot de passe actuel *</label>
+                                    <input type="password" name="current_password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nouveau mot de passe *</label>
+                                    <input type="password" name="new_password" required minlength="6">
+                                    <small style="color: var(--gray);">Minimum 6 caractères</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirmer le mot de passe *</label>
+                                    <input type="password" name="confirm_password" required minlength="6">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" name="change_password" class="btn btn-primary">
+                                    <i class="fas fa-key"></i>
+                                    Changer le mot de passe
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form method="POST">
-                        <div class="form-grid">
-                            <div class="form-group full-width">
-                                <label>Mot de passe actuel *</label>
-                                <input type="password" name="current_password" required>
+                
+                <!-- RESET DES STATISTIQUES -->
+                <div class="danger-zone">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Zone de danger - Réinitialisation</h3>
+                    <p style="margin-bottom: 1rem; color: var(--gray);">
+                        Ces actions sont irréversibles. Vos données seront définitivement supprimées.
+                    </p>
+                    
+                    <form method="post" onsubmit="return confirmReset()">
+                        <div class="reset-options">
+                            <label class="reset-option">
+                                <input type="radio" name="reset_type" value="orders" style="display: none;">
+                                <h4><i class="fas fa-shopping-bag"></i> Commandes</h4>
+                                <p>Supprimer toutes les commandes</p>
+                            </label>
+                            <label class="reset-option">
+                                <input type="radio" name="reset_type" value="customers" style="display: none;">
+                                <h4><i class="fas fa-users"></i> Clients</h4>
+                                <p>Supprimer tous les clients et leurs commandes</p>
+                            </label>
+                            <label class="reset-option">
+                                <input type="radio" name="reset_type" value="products" style="display: none;">
+                                <h4><i class="fas fa-box"></i> Produits</h4>
+                                <p>Supprimer tous les produits et commandes</p>
+                            </label>
+                            <label class="reset-option">
+                                <input type="radio" name="reset_type" value="all" style="display: none;">
+                                <h4><i class="fas fa-trash-alt"></i> Tout réinitialiser</h4>
+                                <p>Supprimer toutes les données</p>
+                            </label>
+                        </div>
+                        
+                        <div class="form-grid" style="margin-top: 1rem;">
+                            <div class="form-group">
+                                <label>Confirmez votre nom d'utilisateur</label>
+                                <input type="text" name="confirm_username" placeholder="Votre nom d'utilisateur" required>
                             </div>
                             <div class="form-group">
-                                <label>Nouveau mot de passe *</label>
-                                <input type="password" name="new_password" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Confirmer le mot de passe *</label>
-                                <input type="password" name="confirm_password" required>
+                                <label>Confirmez votre mot de passe</label>
+                                <input type="password" name="confirm_password" placeholder="Votre mot de passe" required>
                             </div>
                         </div>
-                        <div class="form-actions">
-                            <button type="submit" name="change_password" class="btn btn-primary">
-                                <i class="fas fa-lock"></i>
-                                Changer le mot de passe
-                            </button>
-                        </div>
+                        
+                        <button type="submit" name="reset_stats" class="btn btn-danger" style="margin-top: 1rem;">
+                            <i class="fas fa-redo"></i>
+                            Confirmer la réinitialisation
+                        </button>
                     </form>
                 </div>
-            </div>
-            
             <?php endif; ?>
         </main>
     </div>
-    <?php endif; ?>
     
-    <!-- ============================================================================
-         ADD PRODUCT MODAL
-         ============================================================================ -->
-    <div class="modal-overlay" id="addProductModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2><i class="fas fa-plus-circle"></i> Ajouter un produit</h2>
-                <button class="modal-close" onclick="closeModal('addProductModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Nom du produit *</label>
-                            <input type="text" name="product_name" required placeholder="Ex: iPhone 15 Pro">
-                        </div>
-                        <div class="form-group">
-                            <label>Marque *</label>
-                            <input type="text" name="product_brand" required placeholder="Ex: Apple">
-                        </div>
-                        <div class="form-group">
-                            <label>Catégorie *</label>
-                            <select name="product_category" required>
-                                <?php foreach (array_slice($data['categories'], 1) as $cat): ?>
-                                <option value="<?php echo $cat['id']; ?>"><?php echo $cat['name']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Genre *</label>
-                            <select name="product_gender" required>
-                                <?php foreach (array_slice($data['genders'] ?? ['Tous', 'Femme', 'Homme', 'Mixte'], 1) as $gender): ?>
-                                <option value="<?php echo $gender; ?>"><?php echo $gender; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Prix *</label>
-                            <input type="number" name="product_price" required placeholder="Ex: 25000">
-                        </div>
-                        <div class="form-group">
-                            <label>Ancien prix (promo)</label>
-                            <input type="number" name="product_old_price" placeholder="Laissez vide si pas de promo">
-                        </div>
-                        <div class="form-group">
-                            <label>Stock *</label>
-                            <input type="number" name="product_stock" value="10" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Badge</label>
-                            <select name="product_badge">
-                                <option value="">Aucun</option>
-                                <option value="promo">Promo</option>
-                                <option value="nouveau">Nouveau</option>
-                                <option value="populaire">Populaire</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Note (avis)</label>
-                            <input type="number" name="product_rating" value="0" min="0">
-                        </div>
-                        
-                        <!-- Image principale -->
-                        <div class="form-group full-width">
-                            <label>Image principale *</label>
-                            <div class="image-input-group">
-                                <input type="url" name="product_image" id="product_image_main" placeholder="https://... ou sélectionnez depuis la galerie" required>
-                                <button type="button" class="btn-select-image" onclick="openGallerySelector('product_image_main')">
-                                    <i class="fas fa-images"></i> Galerie
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Images supplémentaires -->
-                        <div class="form-group full-width">
-                            <label>Images supplémentaires (jusqu'à 5)</label>
-                            <p style="font-size: 0.75rem; color: var(--gray); margin-bottom: 0.5rem;">
-                                Ces images seront affichées dans le carousel du produit
-                            </p>
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <div class="image-input-group" style="margin-bottom: 0.5rem;">
-                                <input type="url" name="product_image_<?php echo $i; ?>" id="product_image_<?php echo $i; ?>" placeholder="Image supplémentaire <?php echo $i; ?>">
-                                <button type="button" class="btn-select-image" onclick="openGallerySelector('product_image_<?php echo $i; ?>')">
-                                    <i class="fas fa-images"></i>
-                                </button>
-                            </div>
-                            <?php endfor; ?>
-                        </div>
-                        
-                        <div class="form-group full-width">
-                            <label>Description</label>
-                            <textarea name="product_description" rows="3" placeholder="Décrivez le produit..."></textarea>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('addProductModal')">Annuler</button>
-                        <button type="submit" name="add_product" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Ajouter le produit
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- ============================================================================
-         EDIT PRODUCT MODAL
-         ============================================================================ -->
-    <div class="modal-overlay" id="editProductModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2><i class="fas fa-edit"></i> Modifier un produit</h2>
-                <button class="modal-close" onclick="closeModal('editProductModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="product_id" id="edit_product_id">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Nom du produit *</label>
-                            <input type="text" name="product_name" id="edit_product_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Marque *</label>
-                            <input type="text" name="product_brand" id="edit_product_brand" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Catégorie *</label>
-                            <select name="product_category" id="edit_product_category" required>
-                                <?php foreach (array_slice($data['categories'], 1) as $cat): ?>
-                                <option value="<?php echo $cat['id']; ?>"><?php echo $cat['name']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Genre *</label>
-                            <select name="product_gender" id="edit_product_gender" required>
-                                <?php foreach (array_slice($data['genders'] ?? ['Tous', 'Femme', 'Homme', 'Mixte'], 1) as $gender): ?>
-                                <option value="<?php echo $gender; ?>"><?php echo $gender; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Prix *</label>
-                            <input type="number" name="product_price" id="edit_product_price" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Ancien prix (promo)</label>
-                            <input type="number" name="product_old_price" id="edit_product_old_price">
-                        </div>
-                        <div class="form-group">
-                            <label>Stock *</label>
-                            <input type="number" name="product_stock" id="edit_product_stock" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Badge</label>
-                            <select name="product_badge" id="edit_product_badge">
-                                <option value="">Aucun</option>
-                                <option value="promo">Promo</option>
-                                <option value="nouveau">Nouveau</option>
-                                <option value="populaire">Populaire</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Note (avis)</label>
-                            <input type="number" name="product_rating" id="edit_product_rating" value="0" min="0">
-                        </div>
-                        
-                        <!-- Image principale -->
-                        <div class="form-group full-width">
-                            <label>Image principale *</label>
-                            <div class="image-input-group">
-                                <input type="url" name="product_image" id="edit_product_image_main" required>
-                                <button type="button" class="btn-select-image" onclick="openGallerySelector('edit_product_image_main')">
-                                    <i class="fas fa-images"></i> Galerie
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Images supplémentaires -->
-                        <div class="form-group full-width">
-                            <label>Images supplémentaires (jusqu'à 5)</label>
-                            <p style="font-size: 0.75rem; color: var(--gray); margin-bottom: 0.5rem;">
-                                Ces images seront affichées dans le carousel du produit
-                            </p>
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <div class="image-input-group" style="margin-bottom: 0.5rem;">
-                                <input type="url" name="product_image_<?php echo $i; ?>" id="edit_product_image_<?php echo $i; ?>">
-                                <button type="button" class="btn-select-image" onclick="openGallerySelector('edit_product_image_<?php echo $i; ?>')">
-                                    <i class="fas fa-images"></i>
-                                </button>
-                            </div>
-                            <?php endfor; ?>
-                        </div>
-                        
-                        <div class="form-group full-width">
-                            <label>Description</label>
-                            <textarea name="product_description" id="edit_product_description" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('editProductModal')">Annuler</button>
-                        <button type="submit" name="edit_product" class="btn btn-primary">
-                            <i class="fas fa-save"></i>
-                            Enregistrer les modifications
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- ============================================================================
-         ORDER MODAL
-         ============================================================================ -->
+    <!-- Modal pour éditer une commande -->
     <div class="modal-overlay" id="orderModal">
         <div class="modal">
             <div class="modal-header">
-                <h2><i class="fas fa-shopping-cart"></i> Modifier la commande</h2>
-                <button class="modal-close" onclick="closeModal('orderModal')">
+                <h2>Modifier la commande</h2>
+                <button class="modal-close" onclick="closeOrderModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST">
-                    <input type="hidden" name="order_id" id="order_id">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Statut de la commande</label>
-                            <select name="status" id="order_status">
-                                <option value="en_attente">En attente</option>
-                                <option value="en_cours">En cours</option>
-                                <option value="terminee">Terminée</option>
-                                <option value="annulee">Annulée</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Statut de livraison</label>
-                            <select name="delivery_status" id="order_delivery_status">
-                                <option value="non_livre">Non livré</option>
-                                <option value="en_cours">En cours</option>
-                                <option value="livre">Livré</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Nom du livreur</label>
-                            <input type="text" name="delivery_name" id="order_delivery_name">
-                        </div>
-                        <div class="form-group">
-                            <label>Téléphone du livreur</label>
-                            <input type="text" name="delivery_phone" id="order_delivery_phone">
-                        </div>
+                <form method="post">
+                    <input type="hidden" name="order_id" id="modal_order_id">
+                    
+                    <div class="form-group">
+                        <label>Statut de la commande</label>
+                        <select name="status" id="modal_status">
+                            <option value="en_attente">En attente</option>
+                            <option value="en_cours">En cours</option>
+                            <option value="terminee">Terminée</option>
+                            <option value="annulee">Annulée</option>
+                        </select>
                     </div>
+                    
+                    <div class="form-group">
+                        <label>Statut de livraison</label>
+                        <select name="delivery_status" id="modal_delivery_status">
+                            <option value="non_livre">Non livré</option>
+                            <option value="en_cours">En cours</option>
+                            <option value="livre">Livré</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nom du livreur (optionnel)</label>
+                        <input type="text" name="delivery_name" id="modal_delivery_name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Téléphone livreur (optionnel)</label>
+                        <input type="text" name="delivery_phone" id="modal_delivery_phone">
+                    </div>
+                    
                     <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('orderModal')">Annuler</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeOrderModal()">Annuler</button>
                         <button type="submit" name="update_order_status" class="btn btn-primary">
                             <i class="fas fa-save"></i>
-                            Enregistrer
+                            Sauvegarder
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- ============================================================================
-         ADD CATEGORY MODAL
-         ============================================================================ -->
-    <div class="modal-overlay" id="addCategoryModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2><i class="fas fa-plus-circle"></i> Ajouter une catégorie</h2>
-                <button class="modal-close" onclick="closeModal('addCategoryModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST">
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label>Nom de la catégorie *</label>
-                            <input type="text" name="category_name" required placeholder="Ex: Nouveautés">
-                        </div>
-                        <div class="form-group">
-                            <label>Icône</label>
-                            <input type="text" name="category_icon" placeholder="Ex: 🆕" value="📦">
-                        </div>
-                        <!-- Le nombre de produits est calculé automatiquement -->
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('addCategoryModal')">Annuler</button>
-                        <button type="submit" name="add_category" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Ajouter
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- ============================================================================
-         GALLERY SELECTOR MODAL
-         ============================================================================ -->
-    <div class="modal-overlay" id="gallerySelectorModal">
-        <div class="modal" style="max-width: 800px;">
-            <div class="modal-header">
-                <h2><i class="fas fa-images"></i> Sélectionner une image</h2>
-                <button class="modal-close" onclick="closeModal('gallerySelectorModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="gallery-grid" id="gallerySelectorGrid">
-                    <?php foreach ($galleryImages as $img): ?>
-                    <div class="gallery-item" onclick="selectGalleryImage('<?php echo htmlspecialchars($img['url']); ?>')">
-                        <img src="<?php echo htmlspecialchars($img['url']); ?>" alt="<?php echo htmlspecialchars($img['name']); ?>">
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                <?php if (empty($galleryImages)): ?>
-                <p style="text-align: center; color: var(--gray); padding: 2rem;">
-                    <i class="fas fa-images" style="font-size: 2rem; opacity: 0.3; margin-bottom: 1rem; display: block;"></i>
-                    La galerie est vide. Allez dans la section "Galerie" pour ajouter des images.
-                </p>
-                <?php endif; ?>
             </div>
         </div>
     </div>
     
     <script>
-        let currentImageInputId = null;
-        
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-        
-        function openModal(id) {
-            document.getElementById(id).classList.add('active');
-        }
-        
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
-        
-        function openGallerySelector(inputId) {
-            currentImageInputId = inputId;
-            openModal('gallerySelectorModal');
-        }
-        
-        function selectGalleryImage(url) {
-            if (currentImageInputId) {
-                const inputElement = document.getElementById(currentImageInputId);
-                if (inputElement) {
-                    inputElement.value = url;
-                    inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-            }
-            closeModal('gallerySelectorModal');
-        }
-        
-        function openEditModal(product) {
-            document.getElementById('edit_product_id').value = product.id;
-            document.getElementById('edit_product_name').value = product.name;
-            document.getElementById('edit_product_brand').value = product.brand;
-            document.getElementById('edit_product_category').value = product.category;
-            document.getElementById('edit_product_gender').value = product.gender;
-            document.getElementById('edit_product_price').value = product.price;
-            document.getElementById('edit_product_old_price').value = product.old_price || '';
-            document.getElementById('edit_product_stock').value = product.stock;
-            document.getElementById('edit_product_badge').value = product.badge || '';
-            document.getElementById('edit_product_rating').value = product.rating || 0;
-            document.getElementById('edit_product_image_main').value = product.image;
-            document.getElementById('edit_product_description').value = product.description || '';
+        // Sélection d'image dans la galerie
+        function selectImage(url, inputId, element) {
+            document.getElementById(inputId).value = url;
             
-            // Remplir les images supplémentaires
-            if (product.images) {
-                for (let i = 0; i < product.images.length && i < 5; i++) {
-                    document.getElementById('edit_product_image_' + (i + 1)).value = product.images[i];
-                }
+            // Désélectionner les autres
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Sélectionner celui-ci
+            element.classList.add('selected');
+            
+            // Afficher la prévisualisation
+            const preview = document.getElementById('main_image_preview');
+            if (preview) {
+                preview.innerHTML = '<img src="' + url + '" class="image-preview">';
+            }
+        }
+        
+        // Prévisualisation de l'image uploadée
+        document.getElementById('main_image_input')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('main_image_preview');
+                    if (preview) {
+                        preview.innerHTML = '<img src="' + e.target.result + '" class="image-preview">';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Modal de commande
+        function editOrder(orderJson) {
+            const order = JSON.parse(orderJson);
+            document.getElementById('modal_order_id').value = order.id;
+            document.getElementById('modal_status').value = order.status || 'en_attente';
+            document.getElementById('modal_delivery_status').value = order.delivery_status || 'non_livre';
+            document.getElementById('modal_delivery_name').value = order.delivery_name || '';
+            document.getElementById('modal_delivery_phone').value = order.delivery_phone || '';
+            document.getElementById('orderModal').classList.add('active');
+        }
+        
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+        
+        // Sélection des options de reset
+        document.querySelectorAll('.reset-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.reset-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // Confirmation du reset
+        function confirmReset() {
+            const selectedReset = document.querySelector('input[name="reset_type"]:checked');
+            if (!selectedReset) {
+                alert('Veuillez sélectionner ce que vous voulez réinitialiser.');
+                return false;
             }
             
-            openModal('editProductModal');
+            const resetTypes = {
+                'orders': 'toutes les commandes',
+                'customers': 'tous les clients et leurs commandes',
+                'products': 'tous les produits et commandes',
+                'all': 'TOUTES les données'
+            };
+            
+            return confirm('Êtes-vous sûr de vouloir supprimer ' + resetTypes[selectedReset.value] + ' ?\n\nCette action est IRRÉVERSIBLE !');
         }
         
-        function openOrderModal(order) {
-            document.getElementById('order_id').value = order.id;
-            document.getElementById('order_status').value = order.status;
-            document.getElementById('order_delivery_status').value = order.delivery_status;
-            document.getElementById('order_delivery_name').value = order.delivery_name || '';
-            document.getElementById('order_delivery_phone').value = order.delivery_phone || '';
-            openModal('orderModal');
-        }
-        
-        // Fermer les modals au clic sur l'overlay
-        document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
-                }
+        // Thème selection
+        document.querySelectorAll('.theme-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                this.querySelector('input[type="radio"]').checked = true;
             });
         });
     </script>
+<?php endif; ?>
 </body>
 </html>
